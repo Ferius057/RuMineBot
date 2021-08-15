@@ -1,6 +1,6 @@
-package com.ferius_057.ruminebot;
+package kz.ferius_057.ruminebot;
 
-import com.ferius_057.ruminebot.longpoll.CallbackApiLongPollHandler;
+import kz.ferius_057.ruminebot.longpoll.CallbackApiLongPollHandler;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;

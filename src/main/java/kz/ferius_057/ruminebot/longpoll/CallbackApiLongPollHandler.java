@@ -1,4 +1,4 @@
-package com.ferius_057.ruminebot.longpoll;
+package kz.ferius_057.ruminebot.longpoll;
 
 import com.vk.api.sdk.callback.longpoll.CallbackApiLongPoll;
 import com.vk.api.sdk.client.VkApiClient;

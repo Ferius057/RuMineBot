@@ -1,4 +1,4 @@
-package com.ferius_057.ruminebot;
+package kz.ferius_057.ruminebot;
 
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
