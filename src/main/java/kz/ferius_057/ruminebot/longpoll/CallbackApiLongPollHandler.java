@@ -4,6 +4,7 @@ import com.vk.api.sdk.callback.longpoll.CallbackApiLongPoll;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.objects.messages.Message;
+import kz.ferius_057.ruminebot.commands.Command;
 
 public class CallbackApiLongPollHandler extends CallbackApiLongPoll {
 
@@ -13,6 +14,6 @@ public class CallbackApiLongPollHandler extends CallbackApiLongPoll {
 
     @Override
     public void messageNew(Integer groupId, final Message message) {
-        System.out.println("\nnew message\ntext:" + message.getText());
+        new Command().command(message);
     }
 }
