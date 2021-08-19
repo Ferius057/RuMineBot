@@ -10,19 +10,19 @@ public class Commands {
             switch (nameTable) {
                 case "peer_ids": MANAGER.executeUpdate("CREATE TABLE peerIds (" +
                             "peerId INTEGER," +
-                            "count_admins INTEGER," +
-                            "count_users INTEGER," +
+                            "countAdmins INTEGER," +
+                            "countUsers INTEGER," +
                             "date INTEGER" +
                             ");");
                     System.out.println("Created peer_ids table..."); break;
                 case "users": MANAGER.executeUpdate("CREATE TABLE users (" +
-                            "peerId_userId INTEGER," +
+                            "peerIdUserId INTEGER," +
                             "nickname TEXT," +
                             "role TEXT," +
                             "reputation INTEGER" +
                             ");");
                     System.out.println("Created users table..."); break;
-                case "users_data": MANAGER.executeUpdate("CREATE TABLE users_data (" +
+                case "users_data": MANAGER.executeUpdate("CREATE TABLE usersData (" +
                             "userId INTEGER," +
                             "firstName TEXT," +
                             "lastName TEXT," +

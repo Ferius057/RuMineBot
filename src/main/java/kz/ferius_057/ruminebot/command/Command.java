@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.commands;
+package kz.ferius_057.ruminebot.command;
 
 import com.vk.api.sdk.objects.messages.Message;
 
