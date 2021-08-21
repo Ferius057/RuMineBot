@@ -29,7 +29,6 @@ public class Manager {
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
 
-            ArrayList<Integer> peerIds = new ArrayList<>();
             switch (method) {
                 case "getChats":
                     Data.peerIds.clear();
@@ -37,13 +36,14 @@ public class Manager {
                         Data.peerIds.add(resultSet.getInt(1));
                     }
                     break;
+
+                case "checkTable":
+                    System.out.println("check");
+                    return resultSet.next() && resultSet.getString(1).length() > 3;
             }
-
-            return peerIds;
         } catch (SQLException throwable) {
-            System.err.println(throwable.getMessage());
+            System.err.println(method + " | " + throwable.getMessage());
         }
-
-        return null;
+        return query;
     }
 }
