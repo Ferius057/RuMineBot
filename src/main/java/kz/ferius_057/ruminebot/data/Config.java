@@ -20,11 +20,15 @@ public class Config {
             properties.setProperty("id_group", "");
             properties.setProperty("token", "");
             properties.setProperty("fileNameDataBase", "");
-            properties.store(new FileOutputStream(file), "Config Data");
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                properties.store(new FileOutputStream(String.valueOf(outputStream)), "Config Data");
+            }
             System.out.println("Создан config.yml, настройте конфигурации.");
             System.exit(0);
         } else {
-            properties.load(new FileInputStream(file));
+            try (FileInputStream inStream = new FileInputStream(file)) {
+                properties.load(inStream);
+            }
             try {
                 new VkData().setActor(new GroupActor(Integer.parseInt(properties.getProperty("id_group")), properties.getProperty("token")));
                 setFileNameDataBase(properties.getProperty("fileNameDataBase"));
