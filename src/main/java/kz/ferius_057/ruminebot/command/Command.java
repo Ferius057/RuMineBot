@@ -1,20 +1,13 @@
 package kz.ferius_057.ruminebot.command;
 
-public abstract class Command implements ICommand {
-    private final String name;
-    private final String[] aliases;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.messages.Message;
+import kz.ferius_057.ruminebot.VkApi;
 
-    public Command(String name, String... aliases) {
-        this.name = name;
-        this.aliases = aliases;
-    }
+public interface Command {
+    String getName();
+    String[] getAliases();
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public String[] getAliases() {
-        return aliases;
-    }
+    void run(VkApi vkApi, Message message, String[] args) throws ClientException, ApiException;
 }

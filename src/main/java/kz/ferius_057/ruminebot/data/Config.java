@@ -1,54 +1,57 @@
 package kz.ferius_057.ruminebot.data;
 
-import com.vk.api.sdk.client.actors.GroupActor;
-import kz.ferius_057.ruminebot.VkData;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
-public class Config {
-    private static String fileNameDataBase;
+public final class Config {
+    private final int groupId;
+    private final String token;
+    private final String fileNameDataBase;
 
-    public void fileDataConfig() throws IOException {
-        Properties properties = new Properties();
-        File file = new File("config.yml");
-
-        if (!file.exists()) {
-            properties.setProperty("id_group", "");
-            properties.setProperty("token", "");
-            properties.setProperty("fileNameDataBase", "");
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                properties.store(new FileOutputStream(String.valueOf(outputStream)), "Config Data");
-            }
-            System.out.println("Создан config.yml, настройте конфигурации.");
-            System.exit(0);
-        } else {
-            try (FileInputStream inStream = new FileInputStream(file)) {
-                properties.load(inStream);
-            }
-            try {
-                new VkData().setActor(new GroupActor(Integer.parseInt(properties.getProperty("id_group")), properties.getProperty("token")));
-                setFileNameDataBase(properties.getProperty("fileNameDataBase"));
-                if (properties.getProperty("fileNameDataBase").equals("")) {
-                    System.err.println("Установите название файла базы данных.");
-                    System.exit(0);
-                }
-            } catch (Exception e) {
-                System.err.println("Перепроверьте конфиг.");
-                e.printStackTrace();
-                System.exit(0);
-            }
-        }
+    private Config(final int groupId, final String token, final String fileNameDataBase) {
+        this.groupId = groupId;
+        this.token = token;
+        this.fileNameDataBase = fileNameDataBase;
     }
 
-    public static String getFileNameDataBase() {
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public static Config load(final Path path) throws IOException {
+        Properties properties = new Properties();
+
+        if (Files.exists(path)) {
+                try (final InputStream input = Files.newInputStream(path)) {
+                    properties.load(input);
+                }
+        } else {
+            properties.setProperty("id_group", "1");
+            properties.setProperty("token", "");
+            properties.setProperty("fileNameDataBase", "");
+
+            try (OutputStream os = Files.newOutputStream(path)) {
+                properties.store(os, "Config Data");
+            }
+        }
+
+        return new Config(
+                Integer.parseInt(properties.getProperty("id_group")),
+                properties.getProperty("token"),
+                properties.getProperty("fileNameDataBase")
+        );
+    }
+
+    public String getFileNameDataBase() {
         return fileNameDataBase;
     }
 
-    public static void setFileNameDataBase(String fileNameDataBase) {
-        Config.fileNameDataBase = fileNameDataBase;
-    }
 }
