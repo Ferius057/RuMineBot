@@ -5,18 +5,22 @@ import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
+import kz.ferius_057.ruminebot.VkApi;
 
-public class Kick extends Command {
+public final class CommandKick extends AbstractCommand {
     /*
     Будет сделано позже...
     */
 
-    public Kick() {
+    public CommandKick() {
         super("kick", "кик","кикни");
     }
 
     @Override
-    public void run(VkApiClient vk, GroupActor actor, Message message, String[] args) throws ClientException, ApiException {
+    public void run(final VkApi vkApi, final Message message, final String[] args) throws ClientException, ApiException {
+        GroupActor actor = vkApi.getActor();
+        VkApiClient vk = vkApi.getClient();
+
         vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
                 .message("Кикаю").execute();
     }
