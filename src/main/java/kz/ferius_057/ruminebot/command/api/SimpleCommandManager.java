@@ -1,14 +1,16 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.api;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
+import kz.ferius_057.ruminebot.command.Info;
+import kz.ferius_057.ruminebot.command.Kick;
+import kz.ferius_057.ruminebot.command.Register;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public final class SimpleCommandManager implements CommandManager {
@@ -22,8 +24,9 @@ public final class SimpleCommandManager implements CommandManager {
 
     public static CommandManager create(final VkApi vkApi) {
         CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
-        commandManager.register(new CommandRegister());
-        commandManager.register(new CommandKick());
+        commandManager.register(new Register());
+        commandManager.register(new Kick());
+        commandManager.register(new Info());
 
         return commandManager;
     }
@@ -36,7 +39,7 @@ public final class SimpleCommandManager implements CommandManager {
 
         String[] params = text.substring(1).split(" ");
 
-        Command command = commandMap.get(params[0]);
+        Command command = commandMap.get(params[0].toLowerCase());
         if (command == null) return;
 
         String[] args = Arrays.copyOfRange(params, 1, params.length);

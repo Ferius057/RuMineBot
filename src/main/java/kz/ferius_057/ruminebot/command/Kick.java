@@ -6,13 +6,14 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
+import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 
-public final class CommandKick extends AbstractCommand {
+public final class Kick extends AbstractCommand {
     /*
     Будет сделано позже...
     */
 
-    public CommandKick() {
+    public Kick() {
         super("kick", "кик","кикни");
     }
 

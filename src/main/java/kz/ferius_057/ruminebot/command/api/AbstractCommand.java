@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.api;
 
 public abstract class AbstractCommand implements Command {
 

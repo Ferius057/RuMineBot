@@ -59,4 +59,6 @@ public final class ChatDao {
                 "SELECT peerId FROM peerIds;"
         );
     }
+
+
 }

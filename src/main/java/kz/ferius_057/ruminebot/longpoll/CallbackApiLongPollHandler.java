@@ -4,7 +4,7 @@ import com.vk.api.sdk.callback.longpoll.CallbackApiLongPoll;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.objects.messages.Message;
-import kz.ferius_057.ruminebot.command.CommandManager;
+import kz.ferius_057.ruminebot.command.api.CommandManager;
 
 public class CallbackApiLongPollHandler extends CallbackApiLongPoll {
     private final CommandManager commandManager;

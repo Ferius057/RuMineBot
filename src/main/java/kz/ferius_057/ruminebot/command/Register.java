@@ -5,17 +5,13 @@ import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiMessagesChatUserNoAccessException;
 import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.ConversationMember;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.responses.GetConversationMembersResponse;
-import com.vk.api.sdk.objects.users.Fields;
 import kz.ferius_057.ruminebot.VkApi;
-import kz.ferius_057.ruminebot.database.ChatDao;
+import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 
-import java.util.List;
-
-public final class CommandRegister extends AbstractCommand {
-    public CommandRegister() {
+public final class Register extends AbstractCommand {
+    public Register() {
         super("reg", "register","test");
     }
 
