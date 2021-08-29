@@ -1,7 +1,10 @@
 package kz.ferius_057.ruminebot.database;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public final class ChatDao {
 
@@ -17,7 +20,7 @@ public final class ChatDao {
 
     public void createTables() {
         database.executeUpdate("CREATE TABLE IF NOT EXISTS peerIds (" +
-                "peerId INTEGER," +
+                "peerId INTEGER PRIMARY KEY," +
                 "countAdmins INTEGER," +
                 "countUsers INTEGER," +
                 "date INTEGER" +
@@ -42,10 +45,10 @@ public final class ChatDao {
                 "VALUES (?, ?, ?, ?)", peerId, count_admins, count_users, System.currentTimeMillis());
     }
 
-    public List<Integer> getChats() {
+    public Set<Integer> getChats() {
         return database.executeQuery(
                 rs -> {
-                    List<Integer> result = new ArrayList<>();
+                    Set<Integer> result = new HashSet<>();
 
                     while (rs.next()) {
                         result.add(rs.getInt("peerId"));

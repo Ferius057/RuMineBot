@@ -23,7 +23,7 @@ public final class Database {
 
     public static Database create(final String location) {
         SQLiteDataSource dataSource = new SQLiteDataSource();
-        dataSource.setDatabaseName(location);
+        dataSource.setUrl("jdbc:sqlite:" + location);
 
         return new Database(dataSource);
     }
@@ -36,7 +36,7 @@ public final class Database {
              PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
-            statement.executeUpdate(query);
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +58,7 @@ public final class Database {
              PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
-            try (ResultSet rs = statement.executeQuery(query)) {
+            try (ResultSet rs = statement.executeQuery()) {
                 return reader.apply(rs);
             }
         } catch (SQLException e) {

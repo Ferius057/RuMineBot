@@ -14,11 +14,13 @@ import kz.ferius_057.ruminebot.longpoll.CallbackApiLongPollHandler;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class Main {
     public static void main(String[] args) throws IOException, ClientException, ApiException {
-        Config config = Config.load(Paths.get("config.yml")); // todo поставь всё же config.properties потом
+        Config config = Config.load(Paths.get("config.properties"));
 
         if (config.getFileNameDataBase().isEmpty()) {
             System.err.println("Установите название файла базы данных.");
@@ -34,12 +36,12 @@ public final class Main {
         ChatDao chatDao = ChatDao.create(database);
         chatDao.createTables();
 
-        List<Integer> peerIds = chatDao.getChats();
+        Set<Integer> peerIds = chatDao.getChats();
 
         VkApiClient client = new VkApiClient(new HttpTransportClient());
         GroupActor actor = new GroupActor(config.getGroupId(), config.getToken());
 
-        VkApi vkApi = new VkApiImpl(peerIds, client, actor);
+        VkApi vkApi = new VkApiImpl(chatDao, peerIds, client, actor);
 
         CommandManager commandManager = SimpleCommandManager.create(vkApi);
 
@@ -48,18 +50,25 @@ public final class Main {
     }
 
     private static final class VkApiImpl implements VkApi {
-        private final List<Integer> peerIds;
+        private final ChatDao chatDao;
+        private final Set<Integer> peerIds;
         private final VkApiClient client;
         private final GroupActor actor;
 
-        private VkApiImpl(final List<Integer> peerIds, final VkApiClient client, final GroupActor actor) {
+        private VkApiImpl(final ChatDao chatDao, final Set<Integer> peerIds, final VkApiClient client, final GroupActor actor) {
+            this.chatDao = chatDao;
             this.peerIds = peerIds;
             this.client = client;
             this.actor = actor;
         }
 
         @Override
-        public List<Integer> getPeerIds() {
+        public ChatDao getChatDao() {
+            return chatDao;
+        }
+
+        @Override
+        public Set<Integer> getPeerIds() {
             return peerIds;
         }
 

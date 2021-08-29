@@ -5,9 +5,14 @@ import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiMessagesChatUserNoAccessException;
 import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.messages.ConversationMember;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.responses.GetConversationMembersResponse;
+import com.vk.api.sdk.objects.users.Fields;
 import kz.ferius_057.ruminebot.VkApi;
+import kz.ferius_057.ruminebot.database.ChatDao;
+
+import java.util.List;
 
 public final class CommandRegister extends AbstractCommand {
     public CommandRegister() {
@@ -31,11 +36,22 @@ public final class CommandRegister extends AbstractCommand {
             return;
         }
 
-        if (vkApi.getPeerIds().contains(message.getPeerId())) {
+        if (vkApi.getPeerIds().add(message.getPeerId())) {
+            int countAdmins = 0;
+            System.out.println(membersResponse.getItems());
+            for (int i = 0; i < membersResponse.getItems().size(); i++) {
+                System.out.println(membersResponse.getItems().get(i));
+                if (membersResponse.getItems().get(i).getIsAdmin() != null) countAdmins++;
+            }
+            System.out.println(countAdmins);
+            System.out.println(vkApi.getPeerIds());
+            vkApi.getChatDao().addPeerId(message.getPeerId(), countAdmins, membersResponse.getCount());
             vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
-                    .message("Ваша беседа уже зарегестрирована!").execute();
-        } else {
+                    .message("Ваша беседа успешно зарегистрирована.").execute();
 
+        } else {
+            vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
+                    .message("Ваша беседа уже зарегистрирована!").execute();
         }
     }
 }
