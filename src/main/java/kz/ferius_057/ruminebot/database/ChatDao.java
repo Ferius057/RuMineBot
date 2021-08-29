@@ -23,17 +23,16 @@ public final class ChatDao {
                 "peerId INTEGER PRIMARY KEY," +
                 "countAdmins INTEGER," +
                 "countUsers INTEGER," +
-                "date INTEGER" +
+                "date LONG" +
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS users (" +
-                "peerIdUserId INTEGER," +
+                "peerIdUserId INTEGER ," +
                 "nickname TEXT," +
                 "role TEXT," +
                 "reputation INTEGER" +
                 ");");
-
         database.executeUpdate("CREATE TABLE IF NOT EXISTS usersData (" +
-                "userId INTEGER," +
+                "userId INTEGER PRIMARY KEY," +
                 "firstName TEXT," +
                 "lastName TEXT," +
                 "date INTEGER" +
@@ -60,5 +59,29 @@ public final class ChatDao {
         );
     }
 
+    public Set<Integer> getUsers() {
+        return database.executeQuery(
+                rs -> {
+                    Set<Integer> result = new HashSet<>();
 
+                    while (rs.next()) {
+                        result.add(rs.getInt("userId"));
+                    }
+
+                    return result;
+                },
+                "SELECT userId FROM usersData;"
+        );
+    }
+
+
+    public void addUserInPeerId(final long peerIdUserId, final String nickname, final String role, final int reputation) {
+        database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation)" +
+                "VALUES (?, ?, ?, ?)", peerIdUserId, nickname, role, reputation);
+    }
+
+    public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {
+        database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, date)" +
+                "VALUES (?, ?, ?, ?)", userId, firstName, lastName, System.currentTimeMillis());
+    }
 }

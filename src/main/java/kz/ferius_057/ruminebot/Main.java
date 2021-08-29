@@ -14,10 +14,11 @@ import kz.ferius_057.ruminebot.longpoll.CallbackApiLongPollHandler;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.Set;
 
 public final class Main {
-    public static void main(String[] args) throws IOException, ClientException, ApiException {
+    public static void main(String[] args) throws IOException, ClientException, ApiException, SQLException {
         Config config = Config.load(Paths.get("config.properties"));
 
         if (config.getFileNameDataBase().isEmpty()) {
@@ -35,27 +36,32 @@ public final class Main {
         chatDao.createTables();
 
         Set<Integer> peerIds = chatDao.getChats();
+        Set<Integer> users = chatDao.getUsers();
 
         VkApiClient client = new VkApiClient(new HttpTransportClient());
         GroupActor actor = new GroupActor(config.getGroupId(), config.getToken());
 
-        VkApi vkApi = new VkApiImpl(chatDao, peerIds, client, actor);
+        VkApi vkApi = new VkApiImpl(chatDao, peerIds, users, client, actor);
 
         CommandManager commandManager = SimpleCommandManager.create(vkApi);
 
         CallbackApiLongPollHandler handler = new CallbackApiLongPollHandler(client, actor, commandManager);
         handler.run();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(database::close));
     }
 
     private static final class VkApiImpl implements VkApi {
         private final ChatDao chatDao;
         private final Set<Integer> peerIds;
+        private final Set<Integer> users;
         private final VkApiClient client;
         private final GroupActor actor;
 
-        private VkApiImpl(final ChatDao chatDao, final Set<Integer> peerIds, final VkApiClient client, final GroupActor actor) {
+        private VkApiImpl(final ChatDao chatDao, final Set<Integer> peerIds, final Set<Integer> users, final VkApiClient client, final GroupActor actor) {
             this.chatDao = chatDao;
             this.peerIds = peerIds;
+            this.users = users;
             this.client = client;
             this.actor = actor;
         }
@@ -68,6 +74,11 @@ public final class Main {
         @Override
         public Set<Integer> getPeerIds() {
             return peerIds;
+        }
+
+        @Override
+        public Set<Integer> getUsers() {
+            return users;
         }
 
         @Override

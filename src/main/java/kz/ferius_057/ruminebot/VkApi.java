@@ -15,7 +15,8 @@ public interface VkApi {
     ChatDao getChatDao();
 
     Set<Integer> getPeerIds();
-    VkApiClient getClient();
+    Set<Integer> getUsers();
 
+    VkApiClient getClient();
     GroupActor getActor();
 }

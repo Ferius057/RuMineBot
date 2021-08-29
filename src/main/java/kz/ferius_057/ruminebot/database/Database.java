@@ -1,39 +1,33 @@
 package kz.ferius_057.ruminebot.database;
 
-import org.sqlite.SQLiteDataSource;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.function.Function;
+import java.sql.*;
 
 public final class Database {
-    private final DataSource dataSource;
 
-    public Database(final DataSource dataSource) {
-        this.dataSource = dataSource;
+    private final Connection connection;
+
+    public Database(final Connection connection) {
+        this.connection = connection;
     }
 
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public static Database create(final String location) throws SQLException {
+
+        return new Database(DriverManager.getConnection("jdbc:h2:./" + location));
     }
 
-    public static Database create(final String location) {
-        SQLiteDataSource dataSource = new SQLiteDataSource();
-        dataSource.setUrl("jdbc:sqlite:" + location);
-
-        return new Database(dataSource);
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     public void executeUpdate(
             final String query,
             final Object... parameters
     ) {
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
             statement.executeUpdate();
@@ -54,8 +48,7 @@ public final class Database {
             final String query,
             final Object... parameters
     ) {
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
             try (ResultSet rs = statement.executeQuery()) {

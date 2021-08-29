@@ -44,7 +44,6 @@ public final class Register extends AbstractCommand {
             vkApi.getChatDao().addPeerId(message.getPeerId(), countAdmins, membersResponse.getCount());
             vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
                     .message("Ваша беседа успешно зарегистрирована.").execute();
-
         } else {
             vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
                     .message("Ваша беседа уже зарегистрирована!").execute();
