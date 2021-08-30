@@ -50,9 +50,9 @@ public final class Register extends AbstractCommand {
                         s.getFirstName(),
                         s.getLastName());
                 if (admins.contains(s.getId())) {
-                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(),"1",0,1);
+                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(),"1");
                 } else {
-                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(),"0",0,1);
+                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(),"0");
                 }
             });
 

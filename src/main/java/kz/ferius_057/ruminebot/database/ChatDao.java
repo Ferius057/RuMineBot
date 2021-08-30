@@ -77,14 +77,49 @@ public final class ChatDao {
     }
 
 
-    public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role, final int reputation, final int exist) {
+    public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role) {
         database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation, exist)" +
-                "VALUES (?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, reputation, exist);
+                "VALUES (?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, 0, 1);
     }
 
-    public void replaceExist(final String peerIdUserId, final int exist) {
-        database.executeUpdate("UPDATE users SET exist= (?) " +
-                "WHERE peerIdUserId= (?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
+    public void updatePeerId(final String peerIdUserId, final String nickname, final String role,final int exist) {
+        database.executeUpdate("UPDATE users SET nickname=(?), role=(?), exist=(?) " +
+                "WHERE peerIdUserId=(?)", nickname, role, exist, Long.parseLong(peerIdUserId.replace("_","")));
+    }
+
+    public boolean isUserInPeerId(final String peerIdUserId) {
+        return database.executeQuery(
+                rs -> {
+                    boolean exist = false;
+
+                    while (rs.next()) {
+                        exist = rs.getBoolean("exist");
+                    }
+
+                    return exist;
+                },
+                "SELECT * FROM users WHERE peerIdUserId=(?)", Long.parseLong(peerIdUserId.replace("_",""))
+        );
+    }
+
+    public String wasUserInPeerId(final String peerIdUserId) {
+        return database.executeQuery(
+                rs -> {
+                    String exist = "false";
+
+                    while (rs.next()) {
+                        exist = rs.getString(2);
+                    }
+
+                    return exist;
+                },
+                "SELECT * FROM users WHERE peerIdUserId=(?)", Long.parseLong(peerIdUserId.replace("_",""))
+        );
+    }
+
+    public void updateExist(final String peerIdUserId, final int exist) {
+        database.executeUpdate("UPDATE users SET exist=(?) " +
+                "WHERE peerIdUserId=(?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
     public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {

@@ -7,11 +7,8 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
 import com.vk.api.sdk.objects.messages.MessageActionStatus;
-import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
-
-import java.util.List;
 
 /**
  * @author Charles_Grozny
@@ -27,5 +24,22 @@ public class ChatInviteUser extends AbstractEvent {
         GroupActor actor = vkApi.getActor();
         VkApiClient vk = vkApi.getClient();
 
+        String exist = vkApi.getChatDao().wasUserInPeerId(message.getPeerId() + "_" + action.getMemberId());
+        System.out.println(exist);
+
+        if (exist.equals("false")) {
+            String firstName = vk.users().get(actor).userIds(action.getMemberId().toString()).execute().get(0).getFirstName();
+
+            vk.messages().send(actor).randomId(0).peerId(message.getPeerId()).disableMentions(true)
+                    .message("[id" + action.getMemberId() + "|" + firstName +  "], ты не был в этой беседе.").execute();
+
+
+            vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + action.getMemberId(), firstName,"0");
+        } else {
+            vk.messages().send(actor).randomId(0).peerId(message.getPeerId()).disableMentions(true)
+                    .message("[id" + action.getMemberId() + "|" + exist +  "], ты уже был в этой беседе.").execute();
+
+            vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(),1);
+        }
     }
 }

@@ -7,11 +7,8 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
 import com.vk.api.sdk.objects.messages.MessageActionStatus;
-import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
-
-import java.util.List;
 
 /**
  * @author Charles_Grozny
@@ -27,6 +24,6 @@ public class ChatKickUser extends AbstractEvent {
         GroupActor actor = vkApi.getActor();
         VkApiClient vk = vkApi.getClient();
 
-
+        vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(),0);
     }
 }

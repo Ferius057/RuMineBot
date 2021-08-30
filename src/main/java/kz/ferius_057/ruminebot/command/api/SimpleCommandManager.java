@@ -6,6 +6,7 @@ import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.Info;
 import kz.ferius_057.ruminebot.command.Register;
+import kz.ferius_057.ruminebot.command.Resync;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public final class SimpleCommandManager implements CommandManager {
         CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
         commandManager.register(new Register());
         commandManager.register(new Info());
+        commandManager.register(new Resync());
 
         return commandManager;
     }
