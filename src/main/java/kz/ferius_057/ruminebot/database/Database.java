@@ -32,7 +32,9 @@ public final class Database {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            if (!e.getMessage().contains("Нарушение уникального индекса или первичного ключа")) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -7,8 +7,12 @@ import com.vk.api.sdk.exceptions.ApiMessagesChatUserNoAccessException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.responses.GetConversationMembersResponse;
+import com.vk.api.sdk.objects.users.Fields;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Register extends AbstractCommand {
     public Register() {
@@ -23,7 +27,7 @@ public final class Register extends AbstractCommand {
         GetConversationMembersResponse membersResponse;
 
         try {
-            membersResponse = vk.messages().getConversationMembers(actor, message.getPeerId()).execute();
+            membersResponse = vk.messages().getConversationMembers(actor, message.getPeerId()).fields(Fields.FIRST_NAME_NOM).execute();
         } catch (ApiMessagesChatUserNoAccessException e) {
             if (e.getMessage().contains("You don't have access to this chat (917):")) {
                 vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
@@ -33,14 +37,25 @@ public final class Register extends AbstractCommand {
         }
 
         if (vkApi.getPeerIds().add(message.getPeerId())) {
-            int countAdmins = 0;
-            System.out.println(membersResponse.getItems());
-            for (int i = 0; i < membersResponse.getItems().size(); i++) {
-                System.out.println(membersResponse.getItems().get(i));
-                if (membersResponse.getItems().get(i).getIsAdmin() != null) countAdmins++;
-            }
-            System.out.println(countAdmins);
-            System.out.println(vkApi.getPeerIds());
+            int countAdmins = (int) membersResponse.getItems().stream().filter(s -> s.getIsAdmin() != null).count();
+            List<Integer> admins = new ArrayList<>();
+
+            membersResponse.getItems().forEach(s -> {
+                if (s.getIsAdmin() != null) admins.add(s.getMemberId());
+            });
+
+            membersResponse.getProfiles().forEach(s -> {
+                vkApi.getChatDao().registrationUserInTheBot(
+                        s.getId(),
+                        s.getFirstName(),
+                        s.getLastName());
+                if (admins.contains(s.getId())) {
+                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(), "1", 0);
+                } else {
+                    vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(), "0", 0);
+                }
+            });
+
             vkApi.getChatDao().addPeerId(message.getPeerId(), countAdmins, membersResponse.getCount());
             vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
                     .message("Ваша беседа успешно зарегистрирована.").execute();

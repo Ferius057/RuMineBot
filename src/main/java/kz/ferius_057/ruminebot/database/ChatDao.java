@@ -1,5 +1,6 @@
 package kz.ferius_057.ruminebot.database;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +27,7 @@ public final class ChatDao {
                 "date LONG" +
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS users (" +
-                "peerIdUserId INTEGER ," +
+                "peerIdUserId LONG PRIMARY KEY," +
                 "nickname TEXT," +
                 "role TEXT," +
                 "reputation INTEGER" +
@@ -35,7 +36,7 @@ public final class ChatDao {
                 "userId INTEGER PRIMARY KEY," +
                 "firstName TEXT," +
                 "lastName TEXT," +
-                "date INTEGER" +
+                "date LONG" +
                 ");");
     }
 
@@ -75,9 +76,9 @@ public final class ChatDao {
     }
 
 
-    public void addUserInPeerId(final long peerIdUserId, final String nickname, final String role, final int reputation) {
+    public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role, final int reputation) {
         database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation)" +
-                "VALUES (?, ?, ?, ?)", peerIdUserId, nickname, role, reputation);
+                "VALUES (?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, reputation);
     }
 
     public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {
