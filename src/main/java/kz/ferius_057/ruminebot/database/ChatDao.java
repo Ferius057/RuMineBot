@@ -30,7 +30,8 @@ public final class ChatDao {
                 "peerIdUserId LONG PRIMARY KEY," +
                 "nickname TEXT," +
                 "role TEXT," +
-                "reputation INTEGER" +
+                "reputation INTEGER," +
+                "exist BOOLEAN" +
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS usersData (" +
                 "userId INTEGER PRIMARY KEY," +
@@ -76,9 +77,14 @@ public final class ChatDao {
     }
 
 
-    public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role, final int reputation) {
-        database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation)" +
-                "VALUES (?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, reputation);
+    public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role, final int reputation, final int exist) {
+        database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation, exist)" +
+                "VALUES (?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, reputation, exist);
+    }
+
+    public void replaceExist(final String peerIdUserId, final int exist) {
+        database.executeUpdate("UPDATE users SET exist= (?) " +
+                "WHERE peerIdUserId= (?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
     public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {

@@ -10,6 +10,8 @@ import kz.ferius_057.ruminebot.command.api.SimpleCommandManager;
 import kz.ferius_057.ruminebot.data.Config;
 import kz.ferius_057.ruminebot.database.ChatDao;
 import kz.ferius_057.ruminebot.database.Database;
+import kz.ferius_057.ruminebot.event.api.EventManager;
+import kz.ferius_057.ruminebot.event.api.SimpleEventManager;
 import kz.ferius_057.ruminebot.longpoll.CallbackApiLongPollHandler;
 
 import java.io.IOException;
@@ -44,8 +46,9 @@ public final class Main {
         VkApi vkApi = new VkApiImpl(chatDao, peerIds, users, client, actor);
 
         CommandManager commandManager = SimpleCommandManager.create(vkApi);
+        EventManager eventManager = SimpleEventManager.create(vkApi);
 
-        CallbackApiLongPollHandler handler = new CallbackApiLongPollHandler(client, actor, commandManager);
+        CallbackApiLongPollHandler handler = new CallbackApiLongPollHandler(client, actor, commandManager, eventManager);
         handler.run();
 
         Runtime.getRuntime().addShutdownHook(new Thread(database::close));

@@ -7,7 +7,7 @@ import com.vk.api.sdk.objects.messages.Message;
  */
 public interface CommandManager {
 
-    void run(Message message);
+    boolean run(Message message);
     void register(Command command);
 
 }

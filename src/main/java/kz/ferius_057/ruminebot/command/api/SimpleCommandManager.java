@@ -5,12 +5,10 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.Info;
-import kz.ferius_057.ruminebot.command.Kick;
 import kz.ferius_057.ruminebot.command.Register;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public final class SimpleCommandManager implements CommandManager {
@@ -25,22 +23,21 @@ public final class SimpleCommandManager implements CommandManager {
     public static CommandManager create(final VkApi vkApi) {
         CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
         commandManager.register(new Register());
-        commandManager.register(new Kick());
         commandManager.register(new Info());
 
         return commandManager;
     }
 
     @Override
-    public void run(final Message message) {
+    public boolean run(final Message message) {
         String text = message.getText();
 
-        if (text.length() <= 1 || text.charAt(0) != '!') return;
+        if (text.length() <= 1 || text.charAt(0) != '!') return false;
 
         String[] params = text.substring(1).split(" ");
 
         Command command = commandMap.get(params[0].toLowerCase());
-        if (command == null) return;
+        if (command == null) return true;
 
         String[] args = Arrays.copyOfRange(params, 1, params.length);
 
@@ -49,6 +46,7 @@ public final class SimpleCommandManager implements CommandManager {
         } catch (ClientException | ApiException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     @Override

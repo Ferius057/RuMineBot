@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.database;
 
 import java.sql.*;
+import java.util.Arrays;
 
 public final class Database {
 
