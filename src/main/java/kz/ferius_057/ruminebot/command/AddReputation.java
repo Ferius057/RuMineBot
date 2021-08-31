@@ -39,7 +39,7 @@ public class AddReputation extends AbstractCommand {
 
             GetResponse getResponse = vk.users().get(actor).userIds(replyMessage.getFromId().toString()).execute().get(0);
             if (isUserInPeerId) {
-                int rep = chatDao.getReputation(user) + 1;
+                int rep = chatDao.getUserInPeerId(user).getReputation() + 1;
                 chatDao.giveReputation(user, rep);
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
                         .message("[id" + replyMessage.getFromId() + "|" +

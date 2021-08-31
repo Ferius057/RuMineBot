@@ -1,5 +1,8 @@
 package kz.ferius_057.ruminebot.database;
 
+import kz.ferius_057.ruminebot.command.tool.User;
+import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,12 +34,15 @@ public final class ChatDao {
                 "nickname TEXT," +
                 "role TEXT," +
                 "reputation INTEGER," +
-                "exist BOOLEAN" +
+                "exist BOOLEAN," +
+                "banrep BOOLEAN" +
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS usersData (" +
                 "userId INTEGER PRIMARY KEY," +
                 "firstName TEXT," +
                 "lastName TEXT," +
+                "github TEXT," +
+                "nicknameMinecraft TEXT," +
                 "date LONG" +
                 ");");
     }
@@ -78,8 +84,8 @@ public final class ChatDao {
 
 
     public void addUserInPeerId(final String peerIdUserId, final String nickname, final String role) {
-        database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation, exist)" +
-                "VALUES (?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, 0, 1);
+        database.executeUpdate("INSERT INTO users (peerIdUserId, nickname, role, reputation, exist, banrep)" +
+                "VALUES (?, ?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, 0, true, false);
     }
 
     public void updatePeerId(final String peerIdUserId, final String nickname, final String role,final int exist) {
@@ -127,16 +133,17 @@ public final class ChatDao {
                 "WHERE peerIdUserId=(?)", reputation, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
-    public int getReputation(final String peerIdUserId) {
+    public UserInPeerId getUserInPeerId(final String peerIdUserId) {
         return database.executeQuery(
                 rs -> {
-                    int exist = 0;
+                    UserInPeerId userInPeerId = null;
 
                     while (rs.next()) {
-                        exist = rs.getInt(4);
+                        userInPeerId = new UserInPeerId(rs.getLong(1), rs.getString(2), rs.getString(3),
+                                        rs.getInt(4), rs.getBoolean(5), rs.getBoolean(6));
                     }
 
-                    return exist;
+                    return userInPeerId;
                 },
                 "SELECT * FROM users WHERE peerIdUserId=(?)", Long.parseLong(peerIdUserId.replace("_",""))
         );
@@ -151,9 +158,24 @@ public final class ChatDao {
 
 
 
-
     public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {
-        database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, date)" +
-                "VALUES (?, ?, ?, ?)", userId, firstName, lastName, System.currentTimeMillis());
+        database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, github, nicknameMinecraft, date)" +
+                "VALUES (?, ?, ?, ?, ?, ?)", userId, firstName, lastName, "false", "false", System.currentTimeMillis());
+    }
+
+    public User getUser(final int userId) {
+        return database.executeQuery(
+                rs -> {
+                    User user = null;
+
+                    while (rs.next()) {
+                        user = new User(rs.getInt(1), rs.getString(2), rs.getString(3),
+                                rs.getString(4), rs.getString(5), rs.getLong(6));
+                    }
+
+                    return user;
+                },
+                "SELECT * FROM usersData WHERE userId=(?)", userId
+        );
     }
 }

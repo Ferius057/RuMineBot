@@ -47,11 +47,12 @@ public class Resync extends AbstractCommand {
         });
 
         membersResponse.getProfiles().forEach(s -> {
-            vkApi.getChatDao().registrationUserInTheBot(
-                    s.getId(),
-                    s.getFirstName(),
-                    s.getLastName());
-
+            if (vkApi.getUsers().add(s.getId())) {
+                vkApi.getChatDao().registrationUserInTheBot(
+                        s.getId(),
+                        s.getFirstName(),
+                        s.getLastName());
+            }
             if (admins.contains(s.getId())) {
                 vkApi.getChatDao().updatePeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(), "1", 1);
             } else {

@@ -4,10 +4,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
-import kz.ferius_057.ruminebot.command.AddReputation;
-import kz.ferius_057.ruminebot.command.Info;
-import kz.ferius_057.ruminebot.command.Register;
-import kz.ferius_057.ruminebot.command.Resync;
+import kz.ferius_057.ruminebot.command.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +25,7 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new Info());
         commandManager.register(new Resync());
         commandManager.register(new AddReputation());
+        commandManager.register(new Profile());
 
         return commandManager;
     }
@@ -56,9 +54,10 @@ public final class SimpleCommandManager implements CommandManager {
             args = Arrays.copyOfRange(params, 1, params.length);
         }
 
-        if (command == null) return true;
+        if (command == null && text.length() <= 1 || text.charAt(0) != '!') return true;
 
         try {
+            assert command != null;
             command.run(vkApi, message, args);
         } catch (ClientException | ApiException e) {
             e.printStackTrace();

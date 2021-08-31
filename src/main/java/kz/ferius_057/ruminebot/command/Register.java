@@ -45,10 +45,12 @@ public final class Register extends AbstractCommand {
             });
 
             membersResponse.getProfiles().forEach(s -> {
-                vkApi.getChatDao().registrationUserInTheBot(
-                        s.getId(),
-                        s.getFirstName(),
-                        s.getLastName());
+                if (vkApi.getUsers().add(s.getId())) {
+                    vkApi.getChatDao().registrationUserInTheBot(
+                            s.getId(),
+                            s.getFirstName(),
+                            s.getLastName());
+                }
                 if (admins.contains(s.getId())) {
                     vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + s.getId(), s.getFirstName(),"1");
                 } else {
