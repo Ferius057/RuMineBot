@@ -21,9 +21,6 @@ public class ChatKickUser extends AbstractEvent {
 
     @Override
     public void run(VkApi vkApi, Message message, MessageAction action) throws ClientException, ApiException {
-        GroupActor actor = vkApi.getActor();
-        VkApiClient vk = vkApi.getClient();
-
         vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(),0);
     }
 }

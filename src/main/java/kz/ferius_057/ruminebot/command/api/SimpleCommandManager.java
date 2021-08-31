@@ -4,6 +4,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
+import kz.ferius_057.ruminebot.command.AddReputation;
 import kz.ferius_057.ruminebot.command.Info;
 import kz.ferius_057.ruminebot.command.Register;
 import kz.ferius_057.ruminebot.command.Resync;
@@ -26,6 +27,7 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new Register());
         commandManager.register(new Info());
         commandManager.register(new Resync());
+        commandManager.register(new AddReputation());
 
         return commandManager;
     }
@@ -34,14 +36,27 @@ public final class SimpleCommandManager implements CommandManager {
     public boolean run(final Message message) {
         String text = message.getText();
 
-        if (text.length() <= 1 || text.charAt(0) != '!') return false;
+        Command command = null;
 
-        String[] params = text.substring(1).split(" ");
+        String[] args = null;
 
-        Command command = commandMap.get(params[0].toLowerCase());
+        if (text.length() <= 1 || text.charAt(0) != '!') {
+            if (commandMap.get(text.split(" ")[0].toLowerCase()) != null) {
+                String[] params = text.substring(1).split(" ");
+
+                command = commandMap.get(text.split(" ")[0].toLowerCase());
+
+                args = Arrays.copyOfRange(params, 1, params.length);
+            }
+        } else {
+            String[] params = text.substring(1).split(" ");
+
+            command = commandMap.get(params[0].toLowerCase());
+
+            args = Arrays.copyOfRange(params, 1, params.length);
+        }
+
         if (command == null) return true;
-
-        String[] args = Arrays.copyOfRange(params, 1, params.length);
 
         try {
             command.run(vkApi, message, args);

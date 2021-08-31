@@ -122,6 +122,36 @@ public final class ChatDao {
                 "WHERE peerIdUserId=(?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
+    public void giveReputation(final String peerIdUserId, final int reputation) {
+        database.executeUpdate("UPDATE users SET reputation=(?) " +
+                "WHERE peerIdUserId=(?)", reputation, Long.parseLong(peerIdUserId.replace("_","")));
+    }
+
+    public int getReputation(final String peerIdUserId) {
+        return database.executeQuery(
+                rs -> {
+                    int exist = 0;
+
+                    while (rs.next()) {
+                        exist = rs.getInt(4);
+                    }
+
+                    return exist;
+                },
+                "SELECT * FROM users WHERE peerIdUserId=(?)", Long.parseLong(peerIdUserId.replace("_",""))
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
     public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {
         database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, date)" +
                 "VALUES (?, ?, ?, ?)", userId, firstName, lastName, System.currentTimeMillis());
