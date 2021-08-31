@@ -26,6 +26,8 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new Resync());
         commandManager.register(new AddReputation());
         commandManager.register(new Profile());
+        commandManager.register(new BanRep());
+        commandManager.register(new UnBanRep());
 
         return commandManager;
     }
@@ -39,7 +41,7 @@ public final class SimpleCommandManager implements CommandManager {
         String[] args = null;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {
-            if (commandMap.get(text.split(" ")[0].toLowerCase()) != null) {
+            if (commandMap.get(text.split(" ")[0].toLowerCase()) != null && text.charAt(0) == '+') {
                 String[] params = text.substring(1).split(" ");
 
                 command = commandMap.get(text.split(" ")[0].toLowerCase());
@@ -54,10 +56,10 @@ public final class SimpleCommandManager implements CommandManager {
             args = Arrays.copyOfRange(params, 1, params.length);
         }
 
-        if (command == null && text.length() <= 1 || text.charAt(0) != '!') return true;
+
+        if (command == null) return true;
 
         try {
-            assert command != null;
             command.run(vkApi, message, args);
         } catch (ClientException | ApiException e) {
             e.printStackTrace();

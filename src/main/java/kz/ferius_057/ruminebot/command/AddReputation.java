@@ -9,6 +9,7 @@ import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
+import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
 /**
@@ -30,21 +31,27 @@ public class AddReputation extends AbstractCommand {
 
         if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
             ForeignMessage replyMessage = message.getReplyMessage();
-            if (replyMessage == null) {
-                replyMessage = message.getFwdMessages().get(0);
-            }
+            if (replyMessage == null) replyMessage = message.getFwdMessages().get(0);
             String user = peerId + "_" + replyMessage.getFromId();
 
             boolean isUserInPeerId = chatDao.isUserInPeerId(user);
 
+            UserInPeerId userSender = chatDao.getUserInPeerId(peerId + "_" + message.getFromId());
+
             GetResponse getResponse = vk.users().get(actor).userIds(replyMessage.getFromId().toString()).execute().get(0);
             if (isUserInPeerId) {
-                int rep = chatDao.getUserInPeerId(user).getReputation() + 1;
-                chatDao.giveReputation(user, rep);
-                vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("[id" + replyMessage.getFromId() + "|" +
-                                getResponse.getFirstName() + " " + getResponse.getLastName() +
-                                "] получил +1 к репутации. [" + rep + "]").execute();
+                // Проверка есть ли бан репутации у того кто даёт репутацию
+                if (!userSender.isBanrep()) {
+                    chatDao.giveReputation(user, chatDao.getUserInPeerId(user).getReputation() + 1);
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("[id" + replyMessage.getFromId() + "|" +
+                                    getResponse.getFirstName() + " " + getResponse.getLastName() +
+                                    "] получил +1 к репутации.").execute();
+                } else {
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("[id" + message.getFromId() + "|" +
+                                    userSender.getNickname() + "], вы не можете выдавать репутацию, так как у вас бан репутации.").execute();
+                }
             } else {
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
                         .message("[id" + replyMessage.getFromId() + "|" +

@@ -128,6 +128,11 @@ public final class ChatDao {
                 "WHERE peerIdUserId=(?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
+    public void updateBanReputation(final String peerIdUserId, final boolean banrep) {
+        database.executeUpdate("UPDATE users SET banrep=(?) " +
+                "WHERE peerIdUserId=(?)", banrep, Long.parseLong(peerIdUserId.replace("_","")));
+    }
+
     public void giveReputation(final String peerIdUserId, final int reputation) {
         database.executeUpdate("UPDATE users SET reputation=(?) " +
                 "WHERE peerIdUserId=(?)", reputation, Long.parseLong(peerIdUserId.replace("_","")));
