@@ -13,5 +13,5 @@ import kz.ferius_057.ruminebot.VkApi;
 public interface Event {
     MessageActionStatus getEventName();
 
-    void run(VkApi vkApi, Message message, MessageAction action) throws ClientException, ApiException;
+    void run(Message message, MessageAction action) throws ClientException, ApiException;
 }

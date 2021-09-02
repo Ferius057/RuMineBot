@@ -15,12 +15,12 @@ import kz.ferius_057.ruminebot.event.api.AbstractEvent;
  */
 public class ChatKickUser extends AbstractEvent {
 
-    public ChatKickUser() {
-        super(MessageActionStatus.CHAT_KICK_USER);
+    public ChatKickUser(final VkApi vkApi) {
+        super(vkApi, MessageActionStatus.CHAT_KICK_USER);
     }
 
     @Override
-    public void run(VkApi vkApi, Message message, MessageAction action) throws ClientException, ApiException {
-        vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(),0);
+    public void run(Message message, MessageAction action) throws ClientException, ApiException {
+        vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(),false);
     }
 }

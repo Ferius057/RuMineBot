@@ -17,12 +17,12 @@ import kz.ferius_057.ruminebot.database.ChatDao;
  */
 public class AddReputation extends AbstractCommand {
 
-    public AddReputation() {
-        super("+reputation", "+rep", "+репутация", "+реп");
+    public AddReputation(VkApi vkApi) {
+        super(vkApi,"+reputation", "+rep", "+репутация", "+реп");
     }
 
     @Override
-    public void run(VkApi vkApi, Message message, String[] args) throws ClientException, ApiException {
+    public void run(Message message, String[] args) throws ClientException, ApiException {
         GroupActor actor = vkApi.getActor();
         VkApiClient vk = vkApi.getClient();
         ChatDao chatDao = vkApi.getChatDao();

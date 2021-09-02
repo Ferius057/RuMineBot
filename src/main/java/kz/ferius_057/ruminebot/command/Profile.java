@@ -20,28 +20,26 @@ import java.util.Set;
  */
 public class Profile extends AbstractCommand {
 
-    public Profile() {
-        super("profile", "account","профиль","аккаунт","админы","стат");
+    public Profile(VkApi vkApi) {
+        super(vkApi,"profile", "account","профиль","аккаунт","админы","стат");
     }
 
     @Override
-    public void run(VkApi vkApi, Message message, String[] args) throws ClientException, ApiException {
+    public void run(Message message, String[] args) throws ClientException, ApiException {
         if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
             ForeignMessage replyMessage = message.getReplyMessage();
             if (replyMessage == null) replyMessage = message.getFwdMessages().get(0);
-            profile(vkApi.getUsers(), vkApi.getActor(), vkApi.getClient(), vkApi.getChatDao(), replyMessage.getFromId(), message.getPeerId());
+            profile(vkApi.getUsers(), vkApi.getActor(), vkApi.getChatDao(), replyMessage.getFromId(), message.getPeerId());
         } else {
-            profile(vkApi.getUsers(), vkApi.getActor(), vkApi.getClient(), vkApi.getChatDao(), message.getFromId(), message.getPeerId());
+            profile(vkApi.getUsers(), vkApi.getActor(), vkApi.getChatDao(), message.getFromId(), message.getPeerId());
         }
     }
 
-    private void profile(Set<Integer> users, GroupActor actor, VkApiClient vk, ChatDao chatDao, int id, int peerId) throws ClientException, ApiException {
+    private void profile(Set<Integer> users, GroupActor actor, ChatDao chatDao, int id, int peerId) throws ClientException, ApiException {
         if (users.contains(id)) {
-            long start = System.currentTimeMillis();
-
             User userData = chatDao.getUser(id);
 
-            String user = "[id" + id + "|" + userData.getFirstName() + " " + userData.getLastName() + "]";
+            String user = "[id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "]";
 
             UserInPeerId userInPeerId = chatDao.getUserInPeerId(peerId + "_" + id);
 
@@ -62,7 +60,7 @@ public class Profile extends AbstractCommand {
             else text.append("\n⚜ Github: ").append(userData.getGithub());
 
             vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                    .message(text.toString() + "\n\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.").execute();
+                    .message(text.toString()).execute();
         } else {
             vk.messages().send(actor).randomId(0).peerId(peerId)
                     .message("❌ Не удалось получить информацию.").execute();

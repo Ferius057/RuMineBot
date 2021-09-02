@@ -22,8 +22,8 @@ public final class SimpleEventManager implements EventManager {
 
     public static EventManager create(final VkApi vkApi) {
         EventManager commandManager = new SimpleEventManager(vkApi, new HashMap<>());
-        commandManager.register(new ChatInviteUser());
-        commandManager.register(new ChatKickUser());
+        commandManager.register(new ChatInviteUser(vkApi));
+        commandManager.register(new ChatKickUser(vkApi));
 
         return commandManager;
     }
@@ -34,7 +34,7 @@ public final class SimpleEventManager implements EventManager {
         if (event == null) return false;
 
         try {
-            event.run(vkApi, message, action);
+            event.run(message, action);
         } catch (ClientException | ApiException e) {
             e.printStackTrace();
         }

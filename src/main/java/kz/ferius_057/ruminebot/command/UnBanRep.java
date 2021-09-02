@@ -10,6 +10,7 @@ import com.vk.api.sdk.objects.users.GetNameCase;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
+import kz.ferius_057.ruminebot.command.tool.User;
 import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
@@ -18,39 +19,35 @@ import kz.ferius_057.ruminebot.database.ChatDao;
  */
 public class UnBanRep extends AbstractCommand {
 
-    public UnBanRep() {
-        super("unbanrep", "repunban","разбанреп","репразбан");
+    public UnBanRep(VkApi vkApi) {
+        super(vkApi,"unbanrep", "repunban","разбанреп","репразбан");
     }
 
     @Override
-    public void run(VkApi vkApi, Message message, String[] args) throws ClientException, ApiException {
-        GroupActor actor = vkApi.getActor();
-        VkApiClient vk = vkApi.getClient();
+    public void run(Message message, String[] args) throws ClientException, ApiException {
         ChatDao chatDao = vkApi.getChatDao();
+        ForeignMessage replyMessage = getForeignMessage(message);
 
         int peerId = message.getPeerId();
 
-        if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
-            ForeignMessage replyMessage = message.getReplyMessage();
-            if (replyMessage == null) replyMessage = message.getFwdMessages().get(0);
-            String user = peerId + "_" + replyMessage.getFromId();
+        if (replyMessage != null) {
+            String userDB = peerId + "_" + replyMessage.getFromId();
 
-            GetResponse getResponse = vk.users().get(actor).userIds(replyMessage.getFromId().toString()).nameCase(GetNameCase.GENITIVE).execute().get(0);
-            String userName = getResponse.getFirstName() + " " + getResponse.getLastName();
+            User user = User.user(vkApi, replyMessage.getFromId().toString());
+            String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
 
-            UserInPeerId userInPeerId = chatDao.getUserInPeerId(user);
+            UserInPeerId userInPeerId = chatDao.getUserInPeerId(userDB);
 
             if (userInPeerId == null) {
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("❗ [id" + replyMessage.getFromId() + "|Пользователь] отсутствует в этой беседе.").execute();
+                        .message("❗ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.").execute();
                 return;
             }
 
-
             if (userInPeerId.isBanrep()) {
-                chatDao.updateBanReputation(user, false);
+                chatDao.updateBanReputation(userDB, false);
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("✅ Снял бан репутации у [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
+                        .message("✅ Снял бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
             } else {
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
                         .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] нету бана репутации.").execute();

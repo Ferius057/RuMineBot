@@ -17,15 +17,12 @@ public class Info extends AbstractCommand {
     Будет сделано позже...
     */
 
-    public Info() {
-        super("инфо", "инфа");
+    public Info(VkApi vkApi) {
+        super(vkApi,"инфо", "инфа");
     }
 
     @Override
-    public void run(VkApi vkApi, Message message, String[] args) throws ClientException, ApiException {
-        VkApiClient vk = vkApi.getClient();
-        GroupActor actor = vkApi.getActor();
-
+    public void run(Message message, String[] args) throws ClientException, ApiException {
 
     }
 }

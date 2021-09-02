@@ -5,6 +5,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.*;
+import kz.ferius_057.ruminebot.command.Info;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,13 +22,13 @@ public final class SimpleCommandManager implements CommandManager {
 
     public static CommandManager create(final VkApi vkApi) {
         CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
-        commandManager.register(new Register());
-        commandManager.register(new Info());
-        commandManager.register(new Resync());
-        commandManager.register(new AddReputation());
-        commandManager.register(new Profile());
-        commandManager.register(new BanRep());
-        commandManager.register(new UnBanRep());
+        commandManager.register(new Register(vkApi));
+        commandManager.register(new Info(vkApi));
+        commandManager.register(new Resync(vkApi));
+        commandManager.register(new AddReputation(vkApi));
+        commandManager.register(new Profile(vkApi));
+        commandManager.register(new BanRep(vkApi));
+        commandManager.register(new UnBanRep(vkApi));
 
         return commandManager;
     }
@@ -36,9 +37,9 @@ public final class SimpleCommandManager implements CommandManager {
     public boolean run(final Message message) {
         String text = message.getText();
 
-        Command command = null;
+        Command command;
 
-        String[] args = null;
+        String[] args;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {
             if (commandMap.get(text.split(" ")[0].toLowerCase()) != null && text.charAt(0) == '+') {
@@ -47,7 +48,7 @@ public final class SimpleCommandManager implements CommandManager {
                 command = commandMap.get(text.split(" ")[0].toLowerCase());
 
                 args = Arrays.copyOfRange(params, 1, params.length);
-            }
+            } else return false;
         } else {
             String[] params = text.substring(1).split(" ");
 
@@ -60,7 +61,7 @@ public final class SimpleCommandManager implements CommandManager {
         if (command == null) return true;
 
         try {
-            command.run(vkApi, message, args);
+            command.run(message, args);
         } catch (ClientException | ApiException e) {
             e.printStackTrace();
         }

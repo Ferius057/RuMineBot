@@ -3,11 +3,9 @@ package kz.ferius_057.ruminebot.database;
 import kz.ferius_057.ruminebot.command.tool.User;
 import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
 
+import java.sql.Array;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public final class ChatDao {
@@ -39,8 +37,8 @@ public final class ChatDao {
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS usersData (" +
                 "userId INTEGER PRIMARY KEY," +
-                "firstName TEXT," +
-                "lastName TEXT," +
+                "firstName ARRAY," +
+                "lastName ARRAY," +
                 "github TEXT," +
                 "nicknameMinecraft TEXT," +
                 "date LONG" +
@@ -88,7 +86,7 @@ public final class ChatDao {
                 "VALUES (?, ?, ?, ?, ?, ?)", Long.parseLong(peerIdUserId.replace("_","")), nickname, role, 0, true, false);
     }
 
-    public void updatePeerId(final String peerIdUserId, final String nickname, final String role,final int exist) {
+    public void updatePeerId(final String peerIdUserId, final String nickname, final String role, final int exist) {
         database.executeUpdate("UPDATE users SET nickname=(?), role=(?), exist=(?) " +
                 "WHERE peerIdUserId=(?)", nickname, role, exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
@@ -123,7 +121,7 @@ public final class ChatDao {
         );
     }
 
-    public void updateExist(final String peerIdUserId, final int exist) {
+    public void updateExist(final String peerIdUserId, final boolean exist) {
         database.executeUpdate("UPDATE users SET exist=(?) " +
                 "WHERE peerIdUserId=(?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
     }
@@ -163,7 +161,7 @@ public final class ChatDao {
 
 
 
-    public void registrationUserInTheBot(final int userId, final String firstName, final String lastName) {
+    public void registrationUserInTheBot(final int userId, final String[] firstName, final String[] lastName) {
         database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, github, nicknameMinecraft, date)" +
                 "VALUES (?, ?, ?, ?, ?, ?)", userId, firstName, lastName, "false", "false", System.currentTimeMillis());
     }
@@ -174,7 +172,7 @@ public final class ChatDao {
                     User user = null;
 
                     while (rs.next()) {
-                        user = new User(rs.getInt(1), rs.getString(2), rs.getString(3),
+                        user = new User(rs.getInt(1), (Object[]) rs.getArray(2).getArray(), (Object[]) rs.getArray(3).getArray(),
                                 rs.getString(4), rs.getString(5), rs.getLong(6));
                     }
 
