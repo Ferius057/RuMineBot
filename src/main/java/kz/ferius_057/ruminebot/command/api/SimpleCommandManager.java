@@ -29,6 +29,7 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new Profile(vkApi));
         commandManager.register(new BanRep(vkApi));
         commandManager.register(new UnBanRep(vkApi));
+        commandManager.register(new Uptime(vkApi));
 
         return commandManager;
     }
@@ -41,7 +42,7 @@ public final class SimpleCommandManager implements CommandManager {
 
         String[] args;
 
-        if (text.length() <= 1 || text.charAt(0) != '!') {
+        if (text.length() <= 1 || text.charAt(0) != '/') {
             if (commandMap.get(text.split(" ")[0].toLowerCase()) != null && text.charAt(0) == '+') {
                 String[] params = text.substring(1).split(" ");
 

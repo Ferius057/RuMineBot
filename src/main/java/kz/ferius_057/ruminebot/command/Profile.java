@@ -43,6 +43,12 @@ public class Profile extends AbstractCommand {
 
             UserInPeerId userInPeerId = chatDao.getUserInPeerId(peerId + "_" + id);
 
+            if (userInPeerId == null) {
+                vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                        .message("❗ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.").execute();
+                return;
+            }
+
             StringBuilder text = new StringBuilder();
             text.append("\n\uD83D\uDC8E Информация о пользователе ").append(user).append(":");
             text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(id);
