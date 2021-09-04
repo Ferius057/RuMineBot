@@ -9,7 +9,7 @@ import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
 /**
@@ -23,15 +23,11 @@ public class AddReputation extends AbstractCommand {
 
     @Override
     public void run(Message message, String[] args) throws ClientException, ApiException {
-        GroupActor actor = vkApi.getActor();
-        VkApiClient vk = vkApi.getClient();
-        ChatDao chatDao = vkApi.getChatDao();
+        ForeignMessage replyMessage = getForeignMessage(message);
 
         int peerId = message.getPeerId();
 
-        if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
-            ForeignMessage replyMessage = message.getReplyMessage();
-            if (replyMessage == null) replyMessage = message.getFwdMessages().get(0);
+        if (replyMessage != null) {
             String user = peerId + "_" + replyMessage.getFromId();
 
             boolean isUserInPeerId = chatDao.isUserInPeerId(user);
@@ -58,9 +54,6 @@ public class AddReputation extends AbstractCommand {
                                 getResponse.getFirstName() + " " + getResponse.getLastName() +
                                 "] отсутствует в этой беседе.").execute();
             }
-        } else {
-            vk.messages().send(actor).randomId(0).peerId(peerId)
-                    .message("❗ Сообщение должно быть ответом на другое сообщение или пересланным сообщение.").execute();
         }
     }
 }

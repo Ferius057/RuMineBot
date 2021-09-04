@@ -7,8 +7,8 @@ import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
 import com.vk.api.sdk.objects.messages.MessageActionStatus;
 import kz.ferius_057.ruminebot.VkApi;
-import kz.ferius_057.ruminebot.command.tool.User;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 
 /**

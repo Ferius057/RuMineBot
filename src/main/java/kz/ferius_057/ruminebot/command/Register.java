@@ -10,7 +10,7 @@ import com.vk.api.sdk.objects.messages.responses.GetConversationMembersResponse;
 import com.vk.api.sdk.objects.users.Fields;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,6 @@ public final class Register extends AbstractCommand {
 
     @Override
     public void run(Message message, String[] args) throws ClientException, ApiException {
-        GroupActor actor = vkApi.getActor();
-        VkApiClient vk = vkApi.getClient();
-
         GetConversationMembersResponse membersResponse;
 
         try {

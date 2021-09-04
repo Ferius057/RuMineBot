@@ -1,17 +1,13 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
-import com.vk.api.sdk.objects.users.GetNameCase;
-import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.User;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
 /**

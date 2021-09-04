@@ -1,6 +1,5 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -8,11 +7,10 @@ import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.User;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -53,8 +51,8 @@ public class Profile extends AbstractCommand {
             text.append("\n\uD83D\uDC8E Информация о пользователе ").append(user).append(":");
             text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(id);
             text.append("\n\uD83D\uDDFD Ник в беседе: ").append(userInPeerId.getNickname());
-            if (userInPeerId.getRole().equals("0")) text.append("\n\uD83D\uDC51 Роль: Участник");
-            else if (userInPeerId.getRole().equals("1")) text.append("\n\uD83D\uDC51 Роль: Админ");
+            if (userInPeerId.getRole() == 0) text.append("\n\uD83D\uDC51 Роль: Участник");
+            else if (userInPeerId.getRole() == 1) text.append("\n\uD83D\uDC51 Роль: Админ");
             text.append("\n✳ Репутации: ").append(userInPeerId.getReputation());
             if (userInPeerId.isBanrep()) text.append("\n⭕ Бан Репутации: Есть");
             else text.append("\n⭕ Бан Репутации: Нету");

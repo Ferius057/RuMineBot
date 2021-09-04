@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command.tool;
+package kz.ferius_057.ruminebot.command.api.tool;
 
 /**
  * @author Charles_Grozny

@@ -6,6 +6,9 @@ import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.*;
 import kz.ferius_057.ruminebot.command.Info;
+import kz.ferius_057.ruminebot.command.role.Admin;
+import kz.ferius_057.ruminebot.command.role.Default;
+import kz.ferius_057.ruminebot.data.LocalData;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,19 +33,21 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new BanRep(vkApi));
         commandManager.register(new UnBanRep(vkApi));
         commandManager.register(new Uptime(vkApi));
+        commandManager.register(new Admin(vkApi));
+        commandManager.register(new Default(vkApi));
 
         return commandManager;
     }
 
     @Override
-    public boolean run(final Message message) {
+    public boolean run(final LocalData localData, final Message message) {
         String text = message.getText();
 
         Command command;
 
         String[] args;
 
-        if (text.length() <= 1 || text.charAt(0) != '/') {
+        if (text.length() <= 1 || text.charAt(0) != '!') {
             if (commandMap.get(text.split(" ")[0].toLowerCase()) != null && text.charAt(0) == '+') {
                 String[] params = text.substring(1).split(" ");
 
@@ -58,14 +63,16 @@ public final class SimpleCommandManager implements CommandManager {
             args = Arrays.copyOfRange(params, 1, params.length);
         }
 
-
         if (command == null) return true;
 
         try {
-            command.run(message, args);
+            if (isRegisterPeerId(message.getPeerId(), command, localData)) {
+                command.run(message, args);
+            }
         } catch (ClientException | ApiException e) {
             e.printStackTrace();
         }
+
         return true;
     }
 
@@ -77,4 +84,26 @@ public final class SimpleCommandManager implements CommandManager {
             commandMap.put(alias, command);
     }
 
+    private boolean isRegisterPeerId(int peerId, Command command, LocalData localData) throws ClientException, ApiException {
+        if (!vkApi.getPeerIds().contains(peerId)) {
+            if (!(command instanceof Register)) {
+                if (localData.getRegisterPeerIdCooldown().containsKey(peerId)) {
+                    if (localData.getRegisterPeerIdCooldown().get(peerId) < System.currentTimeMillis()) {
+                        vkApi.getClient().messages().send(vkApi.getActor()).randomId(0).peerId(peerId).disableMentions(true)
+                                .message("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
+                        localData.setRegisterPeerIdCooldown(peerId, System.currentTimeMillis() + 5000);
+                    }
+                } else {
+                    vkApi.getClient().messages().send(vkApi.getActor()).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
+                    localData.setRegisterPeerIdCooldown(peerId, System.currentTimeMillis() + 5000);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
 }

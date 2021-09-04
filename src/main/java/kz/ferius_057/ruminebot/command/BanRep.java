@@ -1,17 +1,13 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
-import com.vk.api.sdk.objects.users.GetNameCase;
-import com.vk.api.sdk.objects.users.responses.GetResponse;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.User;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 import kz.ferius_057.ruminebot.database.ChatDao;
 
 /**
@@ -25,7 +21,6 @@ public class BanRep extends AbstractCommand {
 
     @Override
     public void run(Message message, String[] args) throws ClientException, ApiException {
-        ChatDao chatDao = vkApi.getChatDao();
         ForeignMessage replyMessage = getForeignMessage(message);
 
         int peerId = message.getPeerId();
@@ -52,9 +47,6 @@ public class BanRep extends AbstractCommand {
                 vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
                         .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] уже имеется бан репутации.").execute();
             }
-        } else {
-            vk.messages().send(actor).randomId(0).peerId(peerId)
-                    .message("❗ Сообщение должно быть ответом на другое сообщение или пересланным сообщение.").execute();
         }
     }
 }

@@ -1,12 +1,9 @@
 package kz.ferius_057.ruminebot.database;
 
-import kz.ferius_057.ruminebot.command.tool.User;
-import kz.ferius_057.ruminebot.command.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.command.api.tool.User;
+import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
 
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public final class ChatDao {
 
@@ -30,7 +27,7 @@ public final class ChatDao {
         database.executeUpdate("CREATE TABLE IF NOT EXISTS users (" +
                 "peerIdUserId LONG PRIMARY KEY," +
                 "nickname TEXT," +
-                "role TEXT," +
+                "role INTEGER," +
                 "reputation INTEGER," +
                 "exist BOOLEAN," +
                 "banrep BOOLEAN" +
@@ -106,24 +103,14 @@ public final class ChatDao {
         );
     }
 
-    public String wasUserInPeerId(final String peerIdUserId) {
-        return database.executeQuery(
-                rs -> {
-                    String exist = "false";
-
-                    while (rs.next()) {
-                        exist = rs.getString(2);
-                    }
-
-                    return exist;
-                },
-                "SELECT * FROM users WHERE peerIdUserId=(?)", Long.parseLong(peerIdUserId.replace("_",""))
-        );
-    }
-
     public void updateExist(final String peerIdUserId, final boolean exist) {
         database.executeUpdate("UPDATE users SET exist=(?) " +
                 "WHERE peerIdUserId=(?)", exist, Long.parseLong(peerIdUserId.replace("_","")));
+    }
+
+    public void updateRole(final String peerIdUserId, final int role) {
+        database.executeUpdate("UPDATE users SET role=(?) " +
+                "WHERE peerIdUserId=(?)", role, Long.parseLong(peerIdUserId.replace("_","")));
     }
 
     public void updateBanReputation(final String peerIdUserId, final boolean banrep) {
@@ -142,7 +129,7 @@ public final class ChatDao {
                     UserInPeerId userInPeerId = null;
 
                     while (rs.next()) {
-                        userInPeerId = new UserInPeerId(rs.getLong(1), rs.getString(2), rs.getString(3),
+                        userInPeerId = new UserInPeerId(rs.getLong(1), rs.getString(2), rs.getInt(3),
                                         rs.getInt(4), rs.getBoolean(5), rs.getBoolean(6));
                     }
 

@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command.tool;
+package kz.ferius_057.ruminebot.command.api.tool;
 
 /**
  * @author Charles_Grozny
@@ -6,12 +6,12 @@ package kz.ferius_057.ruminebot.command.tool;
 public class UserInPeerId {
     private final long peerIdUserId;
     private final String nickname;
-    private final String role;
+    private final int role;
     private final int reputation;
     private final boolean exist;
     private final boolean banrep;
 
-    public UserInPeerId(long peerIdUserId, String nickname, String role, int reputation, boolean exist, boolean banrep) {
+    public UserInPeerId(long peerIdUserId, String nickname, int role, int reputation, boolean exist, boolean banrep) {
         this.peerIdUserId = peerIdUserId;
         this.nickname = nickname;
         this.role = role;
@@ -28,7 +28,7 @@ public class UserInPeerId {
         return nickname;
     }
 
-    public String getRole() {
+    public int getRole() {
         return role;
     }
 

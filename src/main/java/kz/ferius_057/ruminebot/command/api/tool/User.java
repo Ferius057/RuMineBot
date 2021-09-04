@@ -1,7 +1,5 @@
-package kz.ferius_057.ruminebot.command.tool;
+package kz.ferius_057.ruminebot.command.api.tool;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.users.GetNameCase;
@@ -57,7 +55,7 @@ public class User {
 
 
 
-    public static User user(VkApi vkApi, String userId) throws ClientException, ApiException {
+    public static User user(final VkApi vkApi, final String userId) throws ClientException, ApiException {
         int j = 0;
         do {
             User user = vkApi.getChatDao().getUser(Integer.parseInt(userId));
@@ -72,7 +70,7 @@ public class User {
         return null;
     }
 
-    public static void registrationUserInTheBot(VkApi vkApi, String... userId) throws ClientException, ApiException {
+    public static void registrationUserInTheBot(final VkApi vkApi, final String... userId) throws ClientException, ApiException {
         HashMap<Integer, String[]> fistName = new HashMap<>();
         HashMap<Integer, String[]> lastName = new HashMap<>();
 

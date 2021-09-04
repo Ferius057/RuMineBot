@@ -5,7 +5,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.tool.UptimeTool;
+import kz.ferius_057.ruminebot.command.api.tool.UptimeTool;
 
 import java.time.Duration;
 

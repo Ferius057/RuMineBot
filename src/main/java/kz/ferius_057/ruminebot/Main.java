@@ -7,7 +7,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import kz.ferius_057.ruminebot.command.api.CommandManager;
 import kz.ferius_057.ruminebot.command.api.SimpleCommandManager;
-import kz.ferius_057.ruminebot.command.tool.UptimeTool;
+import kz.ferius_057.ruminebot.command.api.tool.UptimeTool;
 import kz.ferius_057.ruminebot.data.Config;
 import kz.ferius_057.ruminebot.database.ChatDao;
 import kz.ferius_057.ruminebot.database.Database;
