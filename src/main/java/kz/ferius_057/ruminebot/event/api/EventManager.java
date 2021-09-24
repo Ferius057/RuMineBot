@@ -6,7 +6,6 @@ import kz.ferius_057.ruminebot.command.api.Command;
 import kz.ferius_057.ruminebot.data.LocalData;
 
 public interface EventManager {
-
     boolean run(Message message, MessageAction action);
 
     void register(Event command);

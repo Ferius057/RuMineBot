@@ -5,7 +5,6 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.*;
-import kz.ferius_057.ruminebot.command.Info;
 import kz.ferius_057.ruminebot.command.role.Admin;
 import kz.ferius_057.ruminebot.command.role.Default;
 import kz.ferius_057.ruminebot.data.LocalData;
@@ -26,7 +25,6 @@ public final class SimpleCommandManager implements CommandManager {
     public static CommandManager create(final VkApi vkApi) {
         CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
         commandManager.register(new Register(vkApi));
-        commandManager.register(new Info(vkApi));
         commandManager.register(new Resync(vkApi));
         commandManager.register(new AddReputation(vkApi));
         commandManager.register(new Profile(vkApi));
@@ -35,6 +33,11 @@ public final class SimpleCommandManager implements CommandManager {
         commandManager.register(new Uptime(vkApi));
         commandManager.register(new Admin(vkApi));
         commandManager.register(new Default(vkApi));
+        commandManager.register(new Admins(vkApi));
+        commandManager.register(new ReputationTop(vkApi));
+        commandManager.register(new AddGithub(vkApi));
+        commandManager.register(new AddNickNameMinecraft(vkApi));
+        commandManager.register(new Help(vkApi));
 
         return commandManager;
     }
@@ -44,7 +47,6 @@ public final class SimpleCommandManager implements CommandManager {
         String text = message.getText();
 
         Command command;
-
         String[] args;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {

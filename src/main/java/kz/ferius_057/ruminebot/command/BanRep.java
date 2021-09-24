@@ -6,9 +6,8 @@ import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
 import kz.ferius_057.ruminebot.VkApi;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.api.tool.User;
-import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
-import kz.ferius_057.ruminebot.database.ChatDao;
+import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.database.tool.UserChat;
 
 /**
  * @author Charles_Grozny
@@ -21,31 +20,36 @@ public class BanRep extends AbstractCommand {
 
     @Override
     public void run(Message message, String[] args) throws ClientException, ApiException {
-        ForeignMessage replyMessage = getForeignMessage(message);
-
         int peerId = message.getPeerId();
 
-        if (replyMessage != null) {
-            String userDB = peerId + "_" + replyMessage.getFromId();
+        UserChat sender = chatRepository.getUserFromChat(message.getFromId(), peerId);
 
-            User user = User.user(vkApi, replyMessage.getFromId().toString());
-            String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
+        if (sender.getRole() < 1) {
+            vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                    .message("❗ [id" + message.getFromId() + "|" + sender.getNickname() + "], у вас недостаточно прав для данной команды.").execute();
+        } else {
+            ForeignMessage replyMessage = getForeignMessage(message);
+            if (replyMessage != null) {
 
-            UserInPeerId userInPeerId = chatDao.getUserInPeerId(peerId + "_" + replyMessage.getFromId());
+                User user = User.user(vkApi, replyMessage.getFromId().toString());
+                String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
 
-            if (userInPeerId == null) {
-                vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("❗ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.").execute();
-                return;
-            }
+                UserChat userInPeerId = chatRepository.getUserFromChat(replyMessage.getFromId(), peerId);
 
-            if (!userInPeerId.isBanrep()) {
-                chatDao.updateBanReputation(userDB, true);
-                vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("✅ Выдал бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
-            } else {
-                vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                        .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] уже имеется бан репутации.").execute();
+                if (userInPeerId == null || !userInPeerId.isExist()) {
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("❗ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.").execute();
+                    return;
+                }
+
+                if (!userInPeerId.isBanrep()) {
+                    chatRepository.updateBanReputation(replyMessage.getFromId(), peerId, true);
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("✅ Выдал бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
+                } else {
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] уже имеется бан репутации.").execute();
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import java.util.HashMap;
  * @author Charles_Grozny
  */
 public class LocalData {
-    private HashMap<Integer, Long> registerPeerIdCooldown = new HashMap<>();
+    private final HashMap<Integer, Long> registerPeerIdCooldown = new HashMap<>();
 
     public HashMap<Integer, Long> getRegisterPeerIdCooldown() {
         return registerPeerIdCooldown;

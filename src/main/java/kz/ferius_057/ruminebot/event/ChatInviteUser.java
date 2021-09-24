@@ -7,8 +7,8 @@ import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
 import com.vk.api.sdk.objects.messages.MessageActionStatus;
 import kz.ferius_057.ruminebot.VkApi;
-import kz.ferius_057.ruminebot.command.api.tool.User;
-import kz.ferius_057.ruminebot.command.api.tool.UserInPeerId;
+import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.database.tool.UserChat;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 
 /**
@@ -23,18 +23,14 @@ public class ChatInviteUser extends AbstractEvent {
     @Override
     public void run(Message message, MessageAction action) throws ClientException, ApiException {
         if (action.getMemberId() >= 0) {
-            UserInPeerId userInPeerId = vkApi.getChatDao().getUserInPeerId(message.getPeerId() + "_" + action.getMemberId());
+            UserChat userInPeerId = chatRepository.getUserFromChat(action.getMemberId(), message.getPeerId());
             if (userInPeerId != null) {
-                vk.messages().send(actor).randomId(0).peerId(message.getPeerId()).disableMentions(true)
-                        .message("[id" + action.getMemberId() + "|" + userInPeerId.getNickname() + "], ты уже был в этой беседе.").execute();
 
-                vkApi.getChatDao().updateExist(message.getPeerId() + "_" + message.getFromId(), true);
+                chatRepository.updateExist(message.getFromId(), message.getPeerId(), true);
             } else {
                 User user = User.user(vkApi, action.getMemberId().toString());
 
-                vk.messages().send(actor).randomId(0).peerId(message.getPeerId()).disableMentions(true)
-                        .message("[id" + action.getMemberId() + "|" + user.getFirstName()[0] + "], ты не был в этой беседе.").execute();
-                vkApi.getChatDao().addUserInPeerId(message.getPeerId() + "_" + action.getMemberId(), user.getFirstName()[0].toString(), "0");
+                chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(),0);
             }
         }
     }
