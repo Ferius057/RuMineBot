@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.database.tool;
 
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.users.GetNameCase;
 import com.vk.api.sdk.objects.users.responses.GetResponse;

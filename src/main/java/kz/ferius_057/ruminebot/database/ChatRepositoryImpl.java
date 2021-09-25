@@ -3,7 +3,9 @@ package kz.ferius_057.ruminebot.database;
 import kz.ferius_057.ruminebot.database.tool.User;
 import kz.ferius_057.ruminebot.database.tool.UserChat;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -117,6 +119,23 @@ public class ChatRepositoryImpl implements ChatRepository {
     public void giveReputation(int userId, int peerId, int reputation) {
         database.executeUpdate("UPDATE users SET reputation=(?) " +
                 "WHERE userId=(?) and peerId=(?)", reputation, userId, peerId);
+    }
+
+    @Override
+    public List<UserChat> getAdminsFromChat(int peerId) {
+        return database.executeQuery(
+                rs -> {
+                    List<UserChat> userInPeerId = new ArrayList<>();
+
+                    while (rs.next()) {
+                        userInPeerId.add(new UserChat(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4),
+                                rs.getInt(5), rs.getBoolean(6), rs.getBoolean(7)));
+                    }
+
+                    return userInPeerId;
+                },
+                "SELECT * FROM users WHERE peerId=(?) and role=(?)",  peerId, 1
+        );
     }
 
     @Override

@@ -2,6 +2,7 @@ package kz.ferius_057.ruminebot.command;
 
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
@@ -33,7 +34,14 @@ public class Profile extends AbstractCommand {
     }
 
     private void profile(GroupActor actor, int id, int peerId) throws ClientException, ApiException {
-        User userData = User.user(vkApi, String.valueOf(id));
+        User userData;
+        try {
+            userData = User.user(vkApi, String.valueOf(id));
+        } catch (ApiParamUserIdException e) {
+            vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                    .message("❌ Не удалось получить пользователя | " + e.getMessage()).execute();
+            return;
+        }
 
         String user = "[id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "]";
 
@@ -41,7 +49,7 @@ public class Profile extends AbstractCommand {
 
         if (userInPeerId == null) {
             vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                    .message("❗ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.").execute();
+                    .message("❌ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.").execute();
             return;
         }
 

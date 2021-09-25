@@ -2,6 +2,7 @@ package kz.ferius_057.ruminebot.event;
 
 
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
@@ -28,7 +29,12 @@ public class ChatInviteUser extends AbstractEvent {
 
                 chatRepository.updateExist(message.getFromId(), message.getPeerId(), true);
             } else {
-                User user = User.user(vkApi, action.getMemberId().toString());
+                User user;
+                try {
+                    user = User.user(vkApi, action.getMemberId().toString());
+                } catch (ApiParamUserIdException e) {
+                   return;
+                }
 
                 chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(),0);
             }

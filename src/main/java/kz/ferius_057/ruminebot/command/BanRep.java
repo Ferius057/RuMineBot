@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.command;
 
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
@@ -31,7 +32,14 @@ public class BanRep extends AbstractCommand {
             ForeignMessage replyMessage = getForeignMessage(message);
             if (replyMessage != null) {
 
-                User user = User.user(vkApi, replyMessage.getFromId().toString());
+                User user;
+                try {
+                    user = User.user(vkApi, replyMessage.getFromId().toString());
+                } catch (ApiParamUserIdException e) {
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("❌ Не удалось получить пользователя | " + e.getMessage()).execute();
+                    return;
+                }
                 String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
 
                 UserChat userInPeerId = chatRepository.getUserFromChat(replyMessage.getFromId(), peerId);
@@ -48,7 +56,7 @@ public class BanRep extends AbstractCommand {
                             .message("✅ Выдал бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
                 } else {
                     vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                            .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] уже имеется бан репутации.").execute();
+                            .message("❗ У [id" + replyMessage.getFromId() + "|" + user.getFirstName()[1] + " " + user.getLastName()[1] + "] уже имеется бан репутации.").execute();
                 }
             }
         }

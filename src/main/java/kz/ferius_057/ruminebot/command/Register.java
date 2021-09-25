@@ -22,11 +22,7 @@ public final class Register extends AbstractCommand {
     public void run(Message message, String[] args) throws ClientException, ApiException {
         int peerId = message.getPeerId();
 
-        UserChat sender = chatRepository.getUserFromChat(message.getFromId(), peerId);
-        if (sender.getRole() < 1) {
-            vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                    .message("❗ [id" + peerId + "|" + sender.getNickname() + "], у вас недостаточно прав для данной команды.").execute();
-        } else {
+        if (vkApi.getPeerIds().add(peerId)) {
             GetConversationMembersResponse membersResponse;
 
             try {
@@ -39,48 +35,46 @@ public final class Register extends AbstractCommand {
                 return;
             }
 
-            if (vkApi.getPeerIds().add(peerId)) {
-                long start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
 
-                ArrayList<String> users = new ArrayList<>();
-                ArrayList<String> admins = new ArrayList<>();
+            ArrayList<String> users = new ArrayList<>();
+            ArrayList<String> admins = new ArrayList<>();
 
-                membersResponse.getItems().forEach(s -> {
-                    if (s.getIsAdmin() != null) admins.add(s.getMemberId().toString());
-                });
+            membersResponse.getItems().forEach(s -> {
+                if (s.getIsAdmin() != null) admins.add(s.getMemberId().toString());
+            });
 
-                membersResponse.getProfiles().forEach(s -> {
-                    users.add(s.getId().toString());
-                    if (admins.contains(s.getId().toString())) {
-                        chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
-                    } else {
-                        chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 0);
-                    }
-                });
-
-                for (int i = 0; i < users.size(); i++) {
-                    if (!vkApi.getUsers().add(Integer.valueOf(users.get(i)))) {
-                        users.remove(users.get(i));
-                        i--;
-                    }
+            membersResponse.getProfiles().forEach(s -> {
+                users.add(s.getId().toString());
+                if (admins.contains(s.getId().toString())) {
+                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
+                } else {
+                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 0);
                 }
+            });
 
-                //CompletableFuture.runAsync(() -> {
-                try {
-                    if (users.size() > 0) User.registrationUserInTheBot(vkApi, users.toArray(new String[0]));
-                } catch (ClientException | ApiException e) {
-                    e.printStackTrace();
+            for (int i = 0; i < users.size(); i++) {
+                if (!vkApi.getUsers().add(Integer.valueOf(users.get(i)))) {
+                    users.remove(users.get(i));
+                    i--;
                 }
-                //});
-
-                chatRepository.createChat(peerId);
-
-                vk.messages().send(actor).randomId(0).peerId(peerId)
-                        .message("Ваша беседа успешно зарегистрирована.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.").execute();
-            } else {
-                vk.messages().send(actor).randomId(0).peerId(peerId)
-                        .message("Ваша беседа уже зарегистрирована!").execute();
             }
+
+            //CompletableFuture.runAsync(() -> {
+            try {
+                if (users.size() > 0) User.registrationUserInTheBot(vkApi, users.toArray(new String[0]));
+            } catch (ClientException | ApiException e) {
+                e.printStackTrace();
+            }
+            //});
+
+            chatRepository.createChat(peerId);
+
+            vk.messages().send(actor).randomId(0).peerId(peerId)
+                    .message("Ваша беседа успешно зарегистрирована.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.").execute();
+        } else {
+            vk.messages().send(actor).randomId(0).peerId(peerId)
+                    .message("Ваша беседа уже зарегистрирована!").execute();
         }
     }
 }

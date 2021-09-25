@@ -3,6 +3,8 @@ package kz.ferius_057.ruminebot.database;
 import kz.ferius_057.ruminebot.database.tool.User;
 import kz.ferius_057.ruminebot.database.tool.UserChat;
 
+import java.util.List;
+
 /**
  * @author Charles_Grozny
  */
@@ -29,6 +31,9 @@ public interface ChatRepository {
 
     // Обновляет данные пользователя в беседе | USERS
     void giveReputation(final int userId, final int peerId, final int reputation);
+
+    // Получает пользователя из беседы | USERS
+    List<UserChat> getAdminsFromChat(final int peerId);
 
     // Получает пользователя из беседы | USERS
     UserChat getUserFromChat(final int userId, final int peerId);

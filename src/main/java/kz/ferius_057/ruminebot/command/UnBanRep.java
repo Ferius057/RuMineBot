@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.command;
 
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Message;
@@ -32,14 +33,22 @@ public class UnBanRep extends AbstractCommand {
             if (replyMessage != null) {
                 int userId = replyMessage.getFromId();
 
-                User user = User.user(vkApi, String.valueOf(userId));
+                User user;
+                try {
+                    user = User.user(vkApi, String.valueOf(userId));
+                } catch (ApiParamUserIdException e) {
+                    vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
+                            .message("❌ Не удалось получить пользователя | " + e.getMessage()).execute();
+                    return;
+                }
+
                 String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
 
                 UserChat userInPeerId = chatRepository.getUserFromChat(replyMessage.getFromId(), peerId);
 
                 if (userInPeerId == null) {
                     vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                            .message("❗ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.").execute();
+                            .message("❌ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.").execute();
                     return;
                 }
 
@@ -49,7 +58,7 @@ public class UnBanRep extends AbstractCommand {
                             .message("✅ Снял бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
                 } else {
                     vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                            .message("❗ У [id" + replyMessage.getFromId() + "|" + userName + "] нету бана репутации.").execute();
+                            .message("❗ У [id" + replyMessage.getFromId() + "|" + user.getFirstName()[1] + " " + user.getLastName()[1] + "] нету бана репутации.").execute();
                 }
             }
         }
