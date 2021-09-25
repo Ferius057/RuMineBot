@@ -26,7 +26,7 @@ public class Admins extends AbstractCommand {
         StringBuilder sb = new StringBuilder("✅ Список администраторов:\n");
         for (int i = 0; i < admins.size(); i++) {
             User user = User.user(vkApi, String.valueOf(admins.get(i).getUserId()));
-            sb.append(i+1).append(". ").append(user.getFirstName()[0]).append(" ").append(user.getLastName()[0]).append(".\n");
+            sb.append(i + 1).append(". [id").append(user.getUserId()).append("|").append(user.getFirstName()[0]).append(" ").append(user.getLastName()[0]).append("].\n");
         }
         vk.messages().send(actor).randomId(0).peerId(message.getPeerId()).disableMentions(true)
                 .message(sb.toString()).execute();

@@ -3,7 +3,7 @@ package kz.ferius_057.ruminebot.database.tool;
 /**
  * @author Charles_Grozny
  */
-public class UserChat {
+public class UserChat implements Comparable<UserChat> {
     private final int userId;
     private final int peerId;
     private final String nickname;
@@ -48,5 +48,10 @@ public class UserChat {
 
     public boolean isBanrep() {
         return banrep;
+    }
+
+    @Override
+    public int compareTo(UserChat userChat) {
+        return Integer.compare(reputation, userChat.getReputation());
     }
 }

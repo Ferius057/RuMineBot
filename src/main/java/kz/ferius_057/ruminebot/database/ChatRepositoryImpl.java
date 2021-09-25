@@ -139,6 +139,23 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
+    public List<UserChat> getUsersFromChat(int peerId) {
+        return database.executeQuery(
+                rs -> {
+                    List<UserChat> userInPeerId = new ArrayList<>();
+
+                    while (rs.next()) {
+                        userInPeerId.add(new UserChat(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4),
+                                rs.getInt(5), rs.getBoolean(6), rs.getBoolean(7)));
+                    }
+
+                    return userInPeerId;
+                },
+                "SELECT * FROM users WHERE peerId=(?)", peerId
+        );
+    }
+
+    @Override
     public UserChat getUserFromChat(int userId, int peerId) {
         return database.executeQuery(
                 rs -> {

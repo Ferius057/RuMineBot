@@ -32,8 +32,11 @@ public interface ChatRepository {
     // Обновляет данные пользователя в беседе | USERS
     void giveReputation(final int userId, final int peerId, final int reputation);
 
-    // Получает пользователя из беседы | USERS
+    // Получает все админов из беседы | USERS
     List<UserChat> getAdminsFromChat(final int peerId);
+
+    // Получает всех пользователей из беседы | USERS
+    List<UserChat> getUsersFromChat(final int peerId);
 
     // Получает пользователя из беседы | USERS
     UserChat getUserFromChat(final int userId, final int peerId);
