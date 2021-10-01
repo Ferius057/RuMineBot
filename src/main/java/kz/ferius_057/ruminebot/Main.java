@@ -65,7 +65,7 @@ public final class Main {
         while (start) {
             try {
                 run(client, actor, commandManager, eventManager);
-            } catch (ClientException e) {
+            } catch (Exception e) {
                 start = true;
                 Thread.sleep(10000);
                 continue;

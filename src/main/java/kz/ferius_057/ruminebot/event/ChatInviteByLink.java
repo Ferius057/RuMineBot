@@ -1,6 +1,5 @@
 package kz.ferius_057.ruminebot.event;
 
-
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiParamUserIdException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -15,9 +14,9 @@ import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 /**
  * @author Charles_Grozny
  */
-public class ChatInviteUser extends AbstractEvent {
+public class ChatInviteByLink extends AbstractEvent {
 
-    public ChatInviteUser(final VkApi vkApi) {
+    public ChatInviteByLink(final VkApi vkApi) {
         super(vkApi, MessageActionStatus.CHAT_INVITE_USER);
     }
 

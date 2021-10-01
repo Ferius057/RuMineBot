@@ -5,8 +5,8 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAction;
 import kz.ferius_057.ruminebot.VkApi;
-import kz.ferius_057.ruminebot.event.ChatKickUser;
-import kz.ferius_057.ruminebot.event.ChatInviteUser;
+import kz.ferius_057.ruminebot.event.ChatKick;
+import kz.ferius_057.ruminebot.event.ChatInvite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,8 @@ public final class SimpleEventManager implements EventManager {
 
     public static EventManager create(final VkApi vkApi) {
         EventManager commandManager = new SimpleEventManager(vkApi, new HashMap<>());
-        commandManager.register(new ChatInviteUser(vkApi));
-        commandManager.register(new ChatKickUser(vkApi));
+        commandManager.register(new ChatInvite(vkApi));
+        commandManager.register(new ChatKick(vkApi));
 
         return commandManager;
     }

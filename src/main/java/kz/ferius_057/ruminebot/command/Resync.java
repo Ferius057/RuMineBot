@@ -59,11 +59,11 @@ public class Resync extends AbstractCommand {
                 if (admins.contains(s.getId())) {
                     if (userChat == null)
                         chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
-                    else chatRepository.updateUser(s.getId(), peerId, s.getFirstName(), 1, 1);
+                    else chatRepository.updateUser(s.getId(), peerId, userChat.getNickname(), userChat.getRole(), 1);
                 } else {
                     if (userChat == null)
                         chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 0);
-                    else chatRepository.updateUser(s.getId(), peerId, s.getFirstName(), 0, 1);
+                    else chatRepository.updateUser(s.getId(), peerId, userChat.getNickname(), userChat.getRole(), 1);
                 }
             });
 

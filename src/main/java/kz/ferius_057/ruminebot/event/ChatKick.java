@@ -11,9 +11,9 @@ import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 /**
  * @author Charles_Grozny
  */
-public class ChatKickUser extends AbstractEvent {
+public class ChatKick extends AbstractEvent {
 
-    public ChatKickUser(final VkApi vkApi) {
+    public ChatKick(final VkApi vkApi) {
         super(vkApi, MessageActionStatus.CHAT_KICK_USER);
     }
 
