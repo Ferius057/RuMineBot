@@ -45,6 +45,7 @@ public final class SimpleCommandManager implements CommandManager {
     @Override
     public boolean run(final LocalData localData, final Message message) {
         String text = message.getText();
+        System.out.println(text);
 
         Command command;
         String[] args;

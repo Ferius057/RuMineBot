@@ -42,6 +42,7 @@ public final class Main {
             return;
         }
 
+        System.out.println(config.getFileNameDataBase());
         Database database = Database.create(config.getFileNameDataBase());
 
         ChatRepositoryImpl chatRepositoryImpl = new ChatRepositoryImpl(database);
@@ -61,20 +62,20 @@ public final class Main {
         Runtime.getRuntime().addShutdownHook(new Thread(database::close));
 
         // SDK кидает непонятные ошибки ежедневно, приходится юзать такой метод фикса
-        boolean start = true;
+       /* boolean start = true;
         while (start) {
-            try {
+            try {*/
                 run(client, actor, commandManager, eventManager);
-            } catch (Exception e) {
+       /*     } catch (Exception e) {
                 start = true;
                 Thread.sleep(10000);
                 continue;
             }
             start = false;
-        }
+        }*/
     }
     private static void run(final VkApiClient client, GroupActor actor, CommandManager commandManager, final EventManager eventManager) throws ClientException, ApiException {
-        CallbackApiLongPollHandler handler = new CallbackApiLongPollHandler(client, actor, commandManager, eventManager);
+        CallbackApiLongPollHandler handler = new CallbackApiLongPollHandler(client, actor, 25, commandManager, eventManager);
         handler.run();
     }
 

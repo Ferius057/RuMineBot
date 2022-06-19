@@ -17,26 +17,17 @@ import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 public class ChatInviteByLink extends AbstractEvent {
 
     public ChatInviteByLink(final VkApi vkApi) {
-        super(vkApi, MessageActionStatus.CHAT_INVITE_USER);
+        super(vkApi, MessageActionStatus.CHAT_INVITE_USER_BY_LINK);
     }
 
     @Override
     public void run(Message message, MessageAction action) throws ClientException, ApiException {
+        System.out.println(action);
         if (action.getMemberId() >= 0) {
-            UserChat userInPeerId = chatRepository.getUserFromChat(action.getMemberId(), message.getPeerId());
-            if (userInPeerId != null) {
-
-                chatRepository.updateExist(message.getFromId(), message.getPeerId(), true);
-            } else {
-                User user;
-                try {
-                    user = User.user(vkApi, action.getMemberId().toString());
-                } catch (ApiParamUserIdException e) {
-                   return;
-                }
-
-                chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(),0);
-            }
+            User user = User.user(vkApi, action.getMemberId().toString());
+            System.out.println(user.getUserId());
+            System.out.println(user.getFirstName()[0]);
+            chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(), 0);
         }
     }
 }

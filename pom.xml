@@ -18,13 +18,13 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <version>2.1.212</version>
         </dependency>
 
         <dependency>
-            <groupId>com.vk.api.sdk</groupId>
-            <artifactId>VKSDK</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.vk.api</groupId>
+            <artifactId>sdk</artifactId>
+            <version>1.0.14</version>
         </dependency>
 
         <dependency>

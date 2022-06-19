@@ -28,12 +28,7 @@ public class ChatInvite extends AbstractEvent {
 
                 chatRepository.updateExist(message.getFromId(), message.getPeerId(), true);
             } else {
-                User user;
-                try {
-                    user = User.user(vkApi, action.getMemberId().toString());
-                } catch (ApiParamUserIdException e) {
-                   return;
-                }
+                User user = User.user(vkApi, action.getMemberId().toString());
 
                 chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(),0);
             }
