@@ -1,11 +1,13 @@
 package kz.ferius_057.ruminebot.database.tool;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiParamUserIdException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.users.GetNameCase;
-import com.vk.api.sdk.objects.users.responses.GetResponse;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.additional.NameCase;
+import kz.ferius_057.ruminebot.Manager;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,71 +15,50 @@ import java.util.List;
 /**
  * @author Charles_Grozny
  */
+
+@Getter
+@ToString
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class User {
-    private final int userId;
-    private final Object[] firstName;
-    private final Object[] lastName;
-    private final String github;
-    private final String nicknameMinecraft;
-    private final long date;
+    int userId;
+    Object[] firstName;
+    Object[] lastName;
+    String github;
+    String nicknameMinecraft;
+    long date;
 
-    public User(int userId, Object[] firstName, Object[] lastName, String github, String nicknameMinecraft, long date) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.github = github;
-        this.nicknameMinecraft = nicknameMinecraft;
-        this.date = date;
-    }
+    public static User get(final Manager manager, final int userId) throws VkApiException {
+        User user = manager.localData().users.get(userId);
 
-    public int getUserId() {
-        return userId;
-    }
+        if (user == null) {
+            User userNew = manager.chatRepository().getUser(userId);
 
-    public Object[] getFirstName() {
-        return firstName;
-    }
-
-    public Object[] getLastName() {
-        return lastName;
-    }
-
-    public String getGithub() {
-        return github;
-    }
-
-    public String getNicknameMinecraft() {
-        return nicknameMinecraft;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-
-
-    public static User user(final VkApi vkApi, final String userId) throws ClientException, ApiException {
-        int j = 0;
-        do {
-            User user = vkApi.chatRepositoryImpl().getUser(Integer.parseInt(userId));
-
-            if (user == null) {
-                User.registrationUserInTheBot(vkApi, userId);
-            } else {
-                return user;
+            if (userNew == null) {
+                User.registrationUser(manager, String.valueOf(userId));
+                get(manager, userId);
             }
-            ++j;
-        } while (j < 3);
-        return null;
+
+            manager.localData().users.put(userId, userNew);
+            return userNew;
+        } else return user;
     }
 
-    public static void registrationUserInTheBot(final VkApi vkApi, final String... userId) throws ClientException, ApiException {
+    public static void registrationUser(final Manager manager, final String... userId) throws VkApiException {
+        /*
+        * @todo сделать по нормальному
+        * */
+
         HashMap<Integer, String[]> fistName = new HashMap<>();
         HashMap<Integer, String[]> lastName = new HashMap<>();
 
         for (int i = 0; i < 6; i++) {
-            List<GetResponse> execute = vkApi.getClient().users().get(vkApi.getActor()).userIds(userId).nameCase(GetNameCase.values()[i]).execute();
-            for (GetResponse response : execute) {
+            List<api.longpoll.bots.model.objects.basic.User> responseObject = manager.vk().users.get()
+                    .setUserIds(userId)
+                    .setNameCase(NameCase.values()[i])
+                    .execute().getResponseObject();
+
+            for (api.longpoll.bots.model.objects.basic.User response : responseObject) {
                 String[] f = fistName.get(response.getId());
                 if (f == null) f = new String[6];
                 String[] l = lastName.get(response.getId());
@@ -91,8 +72,8 @@ public class User {
         System.out.println("Сохранил " + fistName.size() + " пользователей в базе бота.");
 
         fistName.forEach((k, v) -> {
-            vkApi.getUsers().add(k);
-            vkApi.chatRepositoryImpl().registerUserInBot(k, v, lastName.get(k));
+            manager.getUsers().add(k);
+            manager.chatRepository().registerUserInBot(k, v, lastName.get(k));
         });
     }
 }

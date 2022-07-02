@@ -4,6 +4,7 @@ import kz.ferius_057.ruminebot.database.tool.User;
 import kz.ferius_057.ruminebot.database.tool.UserChat;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Charles_Grozny
@@ -47,4 +48,9 @@ public interface ChatRepository {
 
     // Получает пользователя из базы бота | USERSDATA
     User getUser(final int userId);
+
+
+
+    Set<Integer> getChats();
+    Set<Integer> getUsers();
 }

@@ -17,6 +17,8 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     public ChatRepositoryImpl(Database database) {
         this.database = database;
+
+        createTables();
     }
 
     public void createTables() {
@@ -35,8 +37,8 @@ public class ChatRepositoryImpl implements ChatRepository {
                 ");");
         database.executeUpdate("CREATE TABLE IF NOT EXISTS usersData (" +
                 "userId INTEGER PRIMARY KEY," +
-                "firstName ARRAY," +
-                "lastName ARRAY," +
+                "firstName TEXT ARRAY," +
+                "lastName TEXT ARRAY," +
                 "github TEXT," +
                 "nicknameMinecraft TEXT," +
                 "date LONG" +
@@ -45,6 +47,7 @@ public class ChatRepositoryImpl implements ChatRepository {
 
 
 
+    @Override
     public Set<Integer> getChats() {
         return database.executeQuery(
                 rs -> {
@@ -60,6 +63,7 @@ public class ChatRepositoryImpl implements ChatRepository {
         );
     }
 
+    @Override
     public Set<Integer> getUsers() {
         return database.executeQuery(
                 rs -> {

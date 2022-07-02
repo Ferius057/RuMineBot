@@ -1,50 +1,52 @@
 package kz.ferius_057.ruminebot.command.api;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.ForeignMessage;
-import com.vk.api.sdk.objects.messages.Message;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.methods.VkBotsMethods;
+import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepository;
+import kz.ferius_057.ruminebot.database.tool.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PROTECTED)
 public abstract class AbstractCommand implements Command {
-    protected final VkApi vkApi;
-    protected final String name;
-    protected final String[] aliases;
-    protected final GroupActor actor;
-    protected final VkApiClient vk;
-    protected final ChatRepository chatRepository;
+    String name;
+    String[] aliases;
 
-    protected AbstractCommand(final VkApi vkApi, final String name, final String... aliases) {
-        this.vkApi = vkApi;
+    Manager manager;
+
+    ChatRepository chatRepository;
+    VkBotsMethods vk;
+    LocalData localData;
+
+    protected AbstractCommand(final Manager manager, final String name, final String... aliases) {
         this.name = name;
-        this.vk = vkApi.getClient();
         this.aliases = aliases;
-        this.actor = vkApi.getActor();
-        this.chatRepository = vkApi.chatRepositoryImpl();
+
+        this.manager = manager;
+
+        this.chatRepository = manager.chatRepository();
+        this.vk = manager.vk();
+        this.localData = manager.localData();
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
+    public void run(User user, Message message, String[] args) throws VkApiException {}
 
-    public String[] getAliases() {
-        return aliases;
-    }
+    @Override
+    public void run(User sender, Message message, List<Message> replyMessages, String[] args) throws VkApiException {}
 
-    protected final ForeignMessage getForeignMessage(final Message message) throws ClientException, ApiException {
-        if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
-            ForeignMessage replyMessage = message.getReplyMessage();
-            if (replyMessage == null) return message.getFwdMessages().get(0);
 
-            return replyMessage;
-        } else {
-            vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
-                    .message("❗ Сообщение должно быть ответом на другое сообщение или пересланным сообщение.").execute();
-            return null;
-        }
+    protected final List<Message> getForeignMessage(final Message message, final int amount) {
+        List<Message> messages = message.getFwdMessages();
+        messages.add(0, message.getReplyMessage());
+
+        return messages.subList(0, amount);
     }
 }

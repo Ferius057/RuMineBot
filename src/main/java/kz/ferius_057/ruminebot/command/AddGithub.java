@@ -1,23 +1,23 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.Message;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
+import kz.ferius_057.ruminebot.database.tool.User;
 
 /**
  * @author Charles_Grozny
  */
 public class AddGithub extends AbstractCommand {
 
-    public AddGithub(VkApi vkApi) {
-        super(vkApi, "github", "гитхаб");
+    public AddGithub(Manager Manager) {
+        super(Manager, "github", "гитхаб");
     }
 
     @Override
-    public void run(Message message, String[] args) throws ClientException, ApiException {
-        vk.messages().send(actor).randomId(0).peerId(message.getPeerId())
-                .message("❌ Данная команда находится в разработке.").execute();
+    public void run(User sender, Message message, String[] args) throws VkApiException {
+        vk.messages.send().setPeerId(message.getPeerId())
+                .setMessage("❌ Данная команда находится в разработке.").execute();
     }
 }

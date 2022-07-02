@@ -1,11 +1,7 @@
 package kz.ferius_057.ruminebot.event.api;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.Message;
-import com.vk.api.sdk.objects.messages.MessageAction;
-import com.vk.api.sdk.objects.messages.MessageActionStatus;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
 
 /**
  * @author Charles_Grozny
@@ -13,5 +9,5 @@ import kz.ferius_057.ruminebot.VkApi;
 public interface Event {
     MessageActionStatus getEventName();
 
-    void run(Message message, MessageAction action) throws ClientException, ApiException;
+    void run(Message message, Message.Action action) throws VkApiException;
 }

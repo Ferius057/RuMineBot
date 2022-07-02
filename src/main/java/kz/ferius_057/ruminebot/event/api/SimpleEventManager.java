@@ -1,43 +1,42 @@
 package kz.ferius_057.ruminebot.event.api;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.Message;
-import com.vk.api.sdk.objects.messages.MessageAction;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.event.ChatInvite;
 import kz.ferius_057.ruminebot.event.ChatInviteByLink;
 import kz.ferius_057.ruminebot.event.ChatKick;
-import kz.ferius_057.ruminebot.event.ChatInvite;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class SimpleEventManager implements EventManager {
-    private final VkApi vkApi;
-    private final Map<String, Event> eventMap;
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+    public final class SimpleEventManager implements EventManager {
+        Map<String, Event> eventMap;
 
-    private SimpleEventManager(final VkApi vkApi, final Map<String, Event> eventMap) {
-        this.vkApi = vkApi;
+    private SimpleEventManager(final Map<String, Event> eventMap) {
         this.eventMap = eventMap;
     }
 
-    public static EventManager create(final VkApi vkApi) {
-        EventManager commandManager = new SimpleEventManager(vkApi, new HashMap<>());
-        commandManager.register(new ChatInvite(vkApi));
-        commandManager.register(new ChatKick(vkApi));
-        commandManager.register(new ChatInviteByLink(vkApi));
+    public static EventManager create(final Manager manager) {
+        EventManager commandManager = new SimpleEventManager(new HashMap<>());
+        commandManager.register(new ChatInvite(manager));
+        commandManager.register(new ChatKick(manager));
+        commandManager.register(new ChatInviteByLink(manager));
 
         return commandManager;
     }
 
     @Override
-    public boolean run(final Message message, final MessageAction action) {
-        Event event = eventMap.get(action.getType().getValue());
+    public boolean run(final Message message, final Message.Action action) {
+        Event event = eventMap.get(action.getType());
         if (event == null) return false;
 
         try {
             event.run(message, action);
-        } catch (ClientException | ApiException e) {
+        } catch (VkApiException e) {
             e.printStackTrace();
         }
         return true;

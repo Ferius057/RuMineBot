@@ -1,50 +1,42 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiMessagesChatUserNoAccessException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.Message;
-import com.vk.api.sdk.objects.messages.responses.GetConversationMembersResponse;
-import com.vk.api.sdk.objects.users.Fields;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.methods.impl.messages.GetConversationMembers;
+import api.longpoll.bots.model.objects.basic.Message;
+import api.longpoll.bots.model.response.ExtendedVkList;
+import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.database.tool.User;
-import kz.ferius_057.ruminebot.database.tool.UserChat;
 
 import java.util.ArrayList;
 
 public final class Register extends AbstractCommand {
-    public Register(VkApi vkApi) {
-        super(vkApi,"reg", "register");
+    public Register(Manager Manager) {
+        super(Manager,"reg", "register");
     }
 
     @Override
-    public void run(Message message, String[] args) throws ClientException, ApiException {
+    public void run(User sender, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        if (vkApi.getPeerIds().add(peerId)) {
-            GetConversationMembersResponse membersResponse;
+        if (manager.getPeerIds().add(peerId)) {
+            ExtendedVkList<GetConversationMembers.Response.Item> response;
 
-            try {
-                membersResponse = vk.messages().getConversationMembers(actor, peerId).fields(Fields.FIRST_NAME_NOM).execute();
-            } catch (ApiMessagesChatUserNoAccessException e) {
-                if (e.getMessage().contains("You don't have access to this chat (917):")) {
-                    vk.messages().send(actor).randomId(0).peerId(peerId)
-                            .message("Не удалось зарегистрировать беседу: Возможно вы мне дали \"Доступ ко всем сообщениям\", для полной работы мне нужно выдать Администратора.").execute();
-                }
-                return;
-            }
+            response = vk.messages.getConversationMembers()
+                    .setPeerId(peerId)
+                    .setFields("first_name_nom")
+                    .execute().getResponseObject();
 
             long start = System.currentTimeMillis();
 
             ArrayList<String> users = new ArrayList<>();
             ArrayList<String> admins = new ArrayList<>();
 
-            membersResponse.getItems().forEach(s -> {
-                if (s.getIsAdmin() != null) admins.add(s.getMemberId().toString());
+            response.getItems().forEach(s -> {
+                if (s.getAdmin() != null) admins.add(s.getMemberId().toString());
             });
 
-            membersResponse.getProfiles().forEach(s -> {
+            response.getProfiles().forEach(s -> {
                 users.add(s.getId().toString());
                 if (admins.contains(s.getId().toString())) {
                     chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
@@ -54,27 +46,27 @@ public final class Register extends AbstractCommand {
             });
 
             for (int i = 0; i < users.size(); i++) {
-                if (!vkApi.getUsers().add(Integer.valueOf(users.get(i)))) {
+                if (!manager.getUsers().add(Integer.valueOf(users.get(i)))) {
                     users.remove(users.get(i));
                     i--;
                 }
             }
 
             //CompletableFuture.runAsync(() -> {
-            try {
-                if (users.size() > 0) User.registrationUserInTheBot(vkApi, users.toArray(new String[0]));
-            } catch (ClientException | ApiException e) {
-                e.printStackTrace();
-            }
+            if (users.size() > 0) User.registrationUser(manager, users.toArray(new String[0]));
             //});
 
             chatRepository.createChat(peerId);
 
-            vk.messages().send(actor).randomId(0).peerId(peerId)
-                    .message("Ваша беседа успешно зарегистрирована.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.").execute();
+            vk.messages.send()
+                    .setPeerId(peerId)
+                    .setMessage("Ваша беседа успешно зарегистрирована.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.")
+                    .execute();
         } else {
-            vk.messages().send(actor).randomId(0).peerId(peerId)
-                    .message("Ваша беседа уже зарегистрирована!").execute();
+            vk.messages.send()
+                    .setPeerId(peerId)
+                    .setMessage("Ваша беседа уже зарегистрирована!")
+                    .execute();
         }
     }
 }

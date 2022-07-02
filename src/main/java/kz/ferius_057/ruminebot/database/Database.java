@@ -13,7 +13,7 @@ public final class Database {
 
     public static Database create(final String location) throws SQLException {
 
-        return new Database(DriverManager.getConnection("jdbc:h2:./" + location));
+        return new Database(DriverManager.getConnection("jdbc:h2:./" + location + ";auto_server=true"));
     }
 
     public void close() {

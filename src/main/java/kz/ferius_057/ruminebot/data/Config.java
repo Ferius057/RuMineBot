@@ -1,5 +1,8 @@
 package kz.ferius_057.ruminebot.data;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,10 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class Config {
-    private final int groupId;
-    private final String token;
-    private final String fileNameDataBase;
+    int groupId;
+    String token;
+    String fileNameDataBase;
 
     private Config(final int groupId, final String token, final String fileNameDataBase) {
         this.groupId = groupId;

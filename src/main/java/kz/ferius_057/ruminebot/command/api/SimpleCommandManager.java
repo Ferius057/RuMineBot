@@ -1,51 +1,47 @@
 package kz.ferius_057.ruminebot.command.api;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.Message;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.*;
 import kz.ferius_057.ruminebot.command.role.Admin;
 import kz.ferius_057.ruminebot.command.role.Default;
-import kz.ferius_057.ruminebot.data.LocalData;
+import kz.ferius_057.ruminebot.database.tool.User;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class SimpleCommandManager implements CommandManager {
-    private final VkApi vkApi;
-    private final Map<String, Command> commandMap;
+    Manager manager;
+    Map<String, Command> commandMap;
 
-    private SimpleCommandManager(final VkApi vkApi, final Map<String, Command> commandMap) {
-        this.vkApi = vkApi;
-        this.commandMap = commandMap;
-    }
-
-    public static CommandManager create(final VkApi vkApi) {
-        CommandManager commandManager = new SimpleCommandManager(vkApi, new HashMap<>());
-        commandManager.register(new Register(vkApi));
-        commandManager.register(new Resync(vkApi));
-        commandManager.register(new AddReputation(vkApi));
-        commandManager.register(new Profile(vkApi));
-        commandManager.register(new BanRep(vkApi));
-        commandManager.register(new UnBanRep(vkApi));
-        commandManager.register(new Uptime(vkApi));
-        commandManager.register(new Admin(vkApi));
-        commandManager.register(new Default(vkApi));
-        commandManager.register(new Admins(vkApi));
-        commandManager.register(new ReputationTop(vkApi));
-        commandManager.register(new AddGithub(vkApi));
-        commandManager.register(new AddNickNameMinecraft(vkApi));
-        commandManager.register(new Help(vkApi));
+    public static CommandManager create(final Manager manager) {
+        CommandManager commandManager = new SimpleCommandManager(manager, new HashMap<>());
+        commandManager.register(new Register(manager));
+        commandManager.register(new Resync(manager));
+        commandManager.register(new AddReputation(manager));
+        commandManager.register(new Profile(manager));
+        commandManager.register(new BanRep(manager));
+        commandManager.register(new UnBanRep(manager));
+        commandManager.register(new Uptime(manager));
+        commandManager.register(new Admin(manager));
+        commandManager.register(new Default(manager));
+        commandManager.register(new Admins(manager));
+        commandManager.register(new ReputationTop(manager));
+        commandManager.register(new AddGithub(manager));
+        commandManager.register(new AddNickNameMinecraft(manager));
+        commandManager.register(new Help(manager));
 
         return commandManager;
     }
 
     @Override
-    public boolean run(final LocalData localData, final Message message) {
+    public boolean run(final Message message) {
         String text = message.getText();
-        System.out.println(text);
 
         Command command;
         String[] args;
@@ -69,12 +65,16 @@ public final class SimpleCommandManager implements CommandManager {
         if (command == null) return true;
 
         try {
-            if (isRegisterPeerId(message.getPeerId(), command, localData)) {
-                command.run(message, args);
-            }
-        } catch (ClientException | ApiException e) {
+            List<Message> messages = replyMessage(message);
+
+            if (messages.get(0) == null)
+                command.run(User.get(manager, message.getFromId()), message, args);
+            else
+                command.run(User.get(manager, message.getFromId()), message, messages, args);
+        } catch (VkApiException e) {
             e.printStackTrace();
         }
+
 
         return true;
     }
@@ -87,18 +87,32 @@ public final class SimpleCommandManager implements CommandManager {
             commandMap.put(alias, command);
     }
 
-    private boolean isRegisterPeerId(int peerId, Command command, LocalData localData) throws ClientException, ApiException {
-        if (!vkApi.getPeerIds().contains(peerId)) {
+
+
+    private List<Message> replyMessage(Message message) {
+        List<Message> messages = message.getFwdMessages();
+        messages.add(0, message.getReplyMessage());
+
+        return messages;
+    }
+
+
+
+  /*
+   TODO: 27.06.2022 | переписать это говно
+
+   private boolean isRegisterPeerId(int peerId, Command command, LocalData localData) throws VkApiException {
+        if (!Manager.getPeerIds().contains(peerId)) {
             if (!(command instanceof Register)) {
                 if (localData.getRegisterPeerIdCooldown().containsKey(peerId)) {
                     if (localData.getRegisterPeerIdCooldown().get(peerId) < System.currentTimeMillis()) {
-                        vkApi.getClient().messages().send(vkApi.getActor()).randomId(0).peerId(peerId).disableMentions(true)
-                                .message("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
+                        Manager.getClient().messages.send(Manager.get()).peerId(peerId).setDisableMentions(true)
+                                .setMessage("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
                         localData.setRegisterPeerIdCooldown(peerId, System.currentTimeMillis() + 5000);
                     }
                 } else {
-                    vkApi.getClient().messages().send(vkApi.getActor()).randomId(0).peerId(peerId).disableMentions(true)
-                            .message("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
+                    Manager.getClient().messages.send(Manager.get()).peerId(peerId).setDisableMentions(true)
+                            .setMessage("❗ Для использования бота необходимо зарегестирировать беседу.").execute();
                     localData.setRegisterPeerIdCooldown(peerId, System.currentTimeMillis() + 5000);
                 }
                 return false;
@@ -108,5 +122,5 @@ public final class SimpleCommandManager implements CommandManager {
         } else {
             return true;
         }
-    }
+    }*/
 }

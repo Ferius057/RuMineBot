@@ -1,29 +1,26 @@
 package kz.ferius_057.ruminebot.event.api;
 
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
-import com.vk.api.sdk.objects.messages.MessageActionStatus;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.methods.VkBotsMethods;
+import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.database.ChatRepository;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PROTECTED)
 public abstract class AbstractEvent implements Event {
 
-    protected final VkApi vkApi;
-    protected final MessageActionStatus eventName;
-    protected final GroupActor actor;
-    protected final VkApiClient vk;
-    protected final ChatRepository chatRepository;
+    Manager manager;
 
-    protected AbstractEvent(final VkApi vkApi, final MessageActionStatus eventName) {
-        this.vkApi = vkApi;
+    VkBotsMethods vk;
+    MessageActionStatus eventName;
+    ChatRepository chatRepository;
+
+    protected AbstractEvent(final Manager manager, final MessageActionStatus eventName) {
+        this.manager = manager;
         this.eventName = eventName;
-        this.vk = vkApi.getClient();
-        this.actor = vkApi.getActor();
-        this.chatRepository = vkApi.chatRepositoryImpl();
-    }
-
-    @Override
-    public MessageActionStatus getEventName() {
-        return eventName;
+        this.vk = manager.vk();
+        this.chatRepository = manager.chatRepository();
     }
 }

@@ -1,55 +1,46 @@
 package kz.ferius_057.ruminebot.command;
 
-import com.vk.api.sdk.client.actors.GroupActor;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiParamUserIdException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.messages.ForeignMessage;
-import com.vk.api.sdk.objects.messages.Message;
-import kz.ferius_057.ruminebot.VkApi;
+import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.database.tool.User;
 import kz.ferius_057.ruminebot.database.tool.UserChat;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author Charles_Grozny
  */
 public class Profile extends AbstractCommand {
 
-    public Profile(VkApi vkApi) {
-        super(vkApi,"profile", "account","профиль","аккаунт","админы","стат");
+    public Profile(Manager Manager) {
+        super(Manager,"profile", "account","профиль","аккаунт","админы","стат");
     }
 
     @Override
-    public void run(Message message, String[] args) throws ClientException, ApiException {
-        if (message.getFwdMessages().size() != 0 || message.getReplyMessage() != null) {
-            ForeignMessage replyMessage = message.getReplyMessage();
-            if (replyMessage == null) replyMessage = message.getFwdMessages().get(0);
-            profile(vkApi.getActor(), replyMessage.getFromId(), message.getPeerId());
-        } else {
-            profile(vkApi.getActor(), message.getFromId(), message.getPeerId());
-        }
+    public void run(User sender, Message message, String[] args) throws VkApiException {
+        profile(message.getFromId(), message.getPeerId());
     }
 
-    private void profile(GroupActor actor, int id, int peerId) throws ClientException, ApiException {
-        User userData;
-        try {
-            userData = User.user(vkApi, String.valueOf(id));
-        } catch (ApiParamUserIdException e) {
-            vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                    .message("❌ Не удалось получить пользователя | " + e.getMessage()).execute();
-            return;
-        }
+    @Override
+    public void run(User sender, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        profile(replyMessages.get(0).getFromId(), message.getPeerId());
+    }
+
+    private void profile(int id, int peerId) throws VkApiException {
+        User userData = User.get(manager, id);
 
         String user = "[id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "]";
 
         UserChat userInPeerId = chatRepository.getUserFromChat(id, peerId);
 
         if (userInPeerId == null) {
-            vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                    .message("❌ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.").execute();
+            vk.messages.send()
+                    .setPeerId(peerId)
+                    .setDisableMentions(true)
+                    .setMessage("❌ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .execute();
             return;
         }
 
@@ -69,8 +60,10 @@ public class Profile extends AbstractCommand {
         if (userData.getGithub().equals("false")) text.append("\n⚜ Github: Не указан");
         else text.append("\n⚜ Github: ").append(userData.getGithub());
 
-        vk.messages().send(actor).randomId(0).peerId(peerId).disableMentions(true)
-                .message(text.toString()).execute();
-
+        vk.messages.send()
+                .setPeerId(peerId)
+                .setDisableMentions(true)
+                .setMessage(text.toString())
+                .execute();
     }
 }
