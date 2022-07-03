@@ -4,7 +4,6 @@ import kz.ferius_057.ruminebot.Manager;
 import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.exceptions.VkApiException;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.UptimeTool;
 import kz.ferius_057.ruminebot.database.tool.User;
 
 import java.time.Duration;
@@ -20,7 +19,7 @@ public class Uptime extends AbstractCommand {
 
     @Override
     public void run(User sender, Message message, String[] args) throws VkApiException {
-        Duration duration = Duration.ofMillis(System.currentTimeMillis() - UptimeTool.getTimeStartMs());
+        Duration duration = Duration.ofMillis(System.currentTimeMillis() - localData.timeStartMs);
 
         long days = duration.toDays();
         long hours = duration.minusDays(days).toHours() % 24;
@@ -33,7 +32,9 @@ public class Uptime extends AbstractCommand {
         if (minutes != 0) time.append(minutes).append(" мин. ");
         if (seconds != 0) time.append(seconds).append(" сек. ");
 
-        vk.messages.send().setPeerId(message.getPeerId())
-                .setMessage("✅Бот работает\nВремя запуска: " + UptimeTool.getTimeStart() + " GMT+3\n" + time).execute();
+        vk.messages.send()
+                .setPeerId(message.getPeerId())
+                .setMessage("✅Бот работает\nВремя запуска: " + localData.getTimeStart() + " GMT+3\n" + time)
+                .execute();
     }
 }

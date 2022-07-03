@@ -5,7 +5,6 @@ import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepository;
 import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 import kz.ferius_057.ruminebot.database.Database;
-import kz.ferius_057.ruminebot.database.tool.UptimeTool;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
 
 import java.io.IOException;
@@ -18,12 +17,11 @@ import java.util.TimeZone;
 
 public final class Main {
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
-        long timeStartMs = System.currentTimeMillis();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+3"));
-        UptimeTool uptime = new UptimeTool();
-        uptime.setTimeStart(simpleDateFormat.format(new Date(timeStartMs)));
-        uptime.setTimeStartMs(timeStartMs);
+        LocalData localData = new LocalData();
+
+        // установка времени запуска
+        localData.setTimeStartMs(System.currentTimeMillis());
+
 
         Config config = Config.load(Paths.get("config.properties"));
 
@@ -44,7 +42,7 @@ public final class Main {
         Set<Integer> chats = chatRepository.getChats();
         Set<Integer> users = chatRepository.getUsers();
 
-        Manager manager = new ManagerImpl(chatRepository, chats, users, null, new LocalData());
+        Manager manager = new ManagerImpl(chatRepository, chats, users, null, localData);
 
         LongPollHandler longPollHandler = new LongPollHandler(config.getToken(), manager);
 
