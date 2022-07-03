@@ -6,16 +6,22 @@ import kz.ferius_057.ruminebot.database.ChatRepository;
 import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 import kz.ferius_057.ruminebot.database.Database;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Set;
-import java.util.TimeZone;
 
 public final class Main {
+
+    static {
+        /* for logging */
+        System.setErr(IoBuilder.forLogger().setLevel(Level.ERROR).buildPrintStream());
+        System.setOut(IoBuilder.forLogger().setLevel(Level.INFO).buildPrintStream());
+    }
+
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         LocalData localData = new LocalData();
 
