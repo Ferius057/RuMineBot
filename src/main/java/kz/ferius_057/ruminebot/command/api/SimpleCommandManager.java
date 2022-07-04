@@ -6,7 +6,9 @@ import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.*;
 import kz.ferius_057.ruminebot.command.role.Admin;
 import kz.ferius_057.ruminebot.command.role.Default;
-import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.UserChat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +20,8 @@ import java.util.*;
 public final class SimpleCommandManager implements CommandManager {
     Manager manager;
     Map<String, Command> commandMap;
+
+    CacheDataMessage cacheDataMessage = new CacheDataMessage();
 
     public static CommandManager create(final Manager manager) {
         CommandManager commandManager = new SimpleCommandManager(manager, new HashMap<>());
@@ -67,10 +71,29 @@ public final class SimpleCommandManager implements CommandManager {
         try {
             List<Message> messages = replyMessage(message);
 
-            if (messages.get(0) == null)
-                command.run(User.get(manager, message.getFromId()), message, args);
-            else
-                command.run(User.get(manager, message.getFromId()), message, messages, args);
+            cacheDataMessage.getReplySenders().clear();
+            cacheDataMessage.getReplySendersUserChat().clear();
+
+            cacheDataMessage.setSender(User.get(manager, message.getFromId()));
+            cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
+
+
+            if (messages.size() == 0)
+                command.run(cacheDataMessage, message, args);
+            else {
+                List<User> users = cacheDataMessage.getReplySenders();
+                List<UserChat> userChats = cacheDataMessage.getReplySendersUserChat();
+
+                for (Message reply : messages) {
+                    users.add(User.get(manager, reply.getFromId()));
+                    userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
+                }
+
+                cacheDataMessage.setReplySenders(users);
+                cacheDataMessage.setReplySendersUserChat(userChats);
+
+                command.run(cacheDataMessage, message, messages, args);
+            }
         } catch (VkApiException e) {
             e.printStackTrace();
         }
@@ -91,7 +114,9 @@ public final class SimpleCommandManager implements CommandManager {
 
     private List<Message> replyMessage(Message message) {
         List<Message> messages = message.getFwdMessages();
-        messages.add(0, message.getReplyMessage());
+
+        if (message.getReplyMessage() != null)
+            messages.add(0, message.getReplyMessage());
 
         return messages;
     }

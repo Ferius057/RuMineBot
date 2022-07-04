@@ -4,7 +4,8 @@ import kz.ferius_057.ruminebot.Manager;
 import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.exceptions.VkApiException;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 
 import java.time.Duration;
 
@@ -18,7 +19,7 @@ public class Uptime extends AbstractCommand {
     }
 
     @Override
-    public void run(User sender, Message message, String[] args) throws VkApiException {
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         Duration duration = Duration.ofMillis(System.currentTimeMillis() - localData.timeStartMs);
 
         long days = duration.toDays();

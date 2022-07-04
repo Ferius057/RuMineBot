@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.database.tool;
+package kz.ferius_057.ruminebot.object;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.additional.NameCase;
@@ -28,6 +28,8 @@ public class User {
     String nicknameMinecraft;
     long date;
 
+    // TODO: 04.07.2022 | сделать fullname
+
     public static User get(final Manager manager, final int userId) throws VkApiException {
         User user = manager.localData().users.get(userId);
 
@@ -45,9 +47,8 @@ public class User {
     }
 
     public static void registrationUser(final Manager manager, final String... userId) throws VkApiException {
-        /*
-        * @todo сделать по нормальному
-        * */
+
+        // TODO: 27.06.2022 | сделать по нормальному
 
         HashMap<Integer, String[]> fistName = new HashMap<>();
         HashMap<Integer, String[]> lastName = new HashMap<>();

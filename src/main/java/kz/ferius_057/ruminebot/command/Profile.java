@@ -4,8 +4,9 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
-import kz.ferius_057.ruminebot.database.tool.UserChat;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.List;
 
@@ -19,46 +20,42 @@ public class Profile extends AbstractCommand {
     }
 
     @Override
-    public void run(User sender, Message message, String[] args) throws VkApiException {
-        profile(message.getFromId(), message.getPeerId());
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
+        profile(cache.getSender(), cache.getSenderUserChat(), message.getPeerId());
     }
 
     @Override
-    public void run(User sender, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        profile(replyMessages.get(0).getFromId(), message.getPeerId());
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        profile(cache.getReplySenders().get(0), cache.getReplySendersUserChat().get(0), message.getPeerId());
     }
 
-    private void profile(int id, int peerId) throws VkApiException {
-        User userData = User.get(manager, id);
+    private void profile(User user, UserChat userChat, int peerId) throws VkApiException {
+        String userName = "[id" + user.getUserId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "]";
 
-        String user = "[id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "]";
-
-        UserChat userInPeerId = chatRepository.getUserFromChat(id, peerId);
-
-        if (userInPeerId == null) {
+        if (userChat == null) {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + id + "|" + userData.getFirstName()[0] + " " + userData.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ [id" + user.getUserId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.")
                     .execute();
             return;
         }
 
         StringBuilder text = new StringBuilder();
-        text.append("\n\uD83D\uDC8E Информация о пользователе ").append(user).append(":");
-        text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(id);
-        text.append("\n\uD83D\uDDFD Ник в беседе: ").append(userInPeerId.getNickname());
-        if (userInPeerId.getRole() == 0) text.append("\n\uD83D\uDC51 Роль: Участник");
-        else if (userInPeerId.getRole() == 1) text.append("\n\uD83D\uDC51 Роль: Админ");
-        text.append("\n✳ Репутации: ").append(userInPeerId.getReputation());
-        if (userInPeerId.isBanrep()) text.append("\n⭕ Бан Репутации: Есть");
+        text.append("\n\uD83D\uDC8E Информация о пользователе ").append(userName).append(":");
+        text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(user.getUserId());
+        text.append("\n\uD83D\uDDFD Ник в беседе: ").append(userChat.getNickname());
+        if (userChat.getRole() == 0) text.append("\n\uD83D\uDC51 Роль: Участник");
+        else if (userChat.getRole() == 1) text.append("\n\uD83D\uDC51 Роль: Админ");
+        text.append("\n✳ Репутации: ").append(userChat.getReputation());
+        if (userChat.isBanrep()) text.append("\n⭕ Бан Репутации: Есть");
         else text.append("\n⭕ Бан Репутации: Нету");
 
-        if (userData.getNicknameMinecraft().equals("false"))
+        if (user.getNicknameMinecraft().equals("false"))
             text.append("\n\n\uD83D\uDCA0 Ник в Minecraft: Не указан");
-        else text.append("\n\n\uD83D\uDCA0 Ник в Minecraft: ").append(userData.getNicknameMinecraft());
-        if (userData.getGithub().equals("false")) text.append("\n⚜ Github: Не указан");
-        else text.append("\n⚜ Github: ").append(userData.getGithub());
+        else text.append("\n\n\uD83D\uDCA0 Ник в Minecraft: ").append(user.getNicknameMinecraft());
+        if (user.getGithub().equals("false")) text.append("\n⚜ Github: Не указан");
+        else text.append("\n⚜ Github: ").append(user.getGithub());
 
         vk.messages.send()
                 .setPeerId(peerId)

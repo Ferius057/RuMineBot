@@ -6,8 +6,9 @@ import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.model.response.ExtendedVkList;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
-import kz.ferius_057.ruminebot.database.tool.UserChat;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,12 @@ public class Resync extends AbstractCommand {
     }
 
     @Override
-    public void run(User user, Message message, String[] args) throws VkApiException {
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        UserChat sender = chatRepository.getUserFromChat(message.getFromId(), peerId);
-        if (sender.getRole() < 1) {
+        if (cache.getSenderUserChat().getRole() < 1) {
             vk.messages.send().setPeerId(message.getPeerId()).setDisableMentions(true)
-                    .setMessage("❗ [id" + message.getFromId() + "|" + sender.getNickname() + "], у вас недостаточно прав для данной команды.").execute();
+                    .setMessage("❗ [id" + message.getFromId() + "|" + cache.getSenderUserChat().getNickname() + "], у вас недостаточно прав для данной команды.").execute();
         } else {
             ExtendedVkList<GetConversationMembers.Response.Item> response;
 

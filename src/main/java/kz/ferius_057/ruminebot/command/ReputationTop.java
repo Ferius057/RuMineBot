@@ -4,8 +4,9 @@ import kz.ferius_057.ruminebot.Manager;
 import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.exceptions.VkApiException;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
-import kz.ferius_057.ruminebot.database.tool.UserChat;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class ReputationTop extends AbstractCommand {
     }
 
     @Override
-    public void run(User sender, Message message, String[] args) throws VkApiException {
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         List<UserChat> top = chatRepository.getUsersFromChat(message.getPeerId())
                 .stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         top.removeIf(s -> (s.getReputation() < 1));

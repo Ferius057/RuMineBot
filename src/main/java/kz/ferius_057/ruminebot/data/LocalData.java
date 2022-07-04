@@ -1,6 +1,6 @@
 package kz.ferius_057.ruminebot.data;
 
-import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.object.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.util.TimeZone;
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PUBLIC)
 public class LocalData {
-    HashMap<Integer, User> users = new HashMap<>();
+    HashMap<Integer, User> users = new HashMap<>(); // TODO: 04.07.2022 | сделать что бы обновлялось
 
 
 

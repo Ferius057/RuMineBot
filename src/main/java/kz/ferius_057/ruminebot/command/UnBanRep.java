@@ -4,8 +4,9 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
-import kz.ferius_057.ruminebot.database.tool.UserChat;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.List;
 
@@ -19,35 +20,33 @@ public class UnBanRep extends AbstractCommand {
     }
 
     @Override
-    public void run(User userSender, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        UserChat sender = chatRepository.getUserFromChat(message.getFromId(), peerId);
-        if (sender.getRole() < 1) {
+        if (cache.getSenderUserChat().getRole() < 1) {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❗ [id" + peerId + "|" + sender.getNickname() + "], у вас недостаточно прав для данной команды.")
+                    .setMessage("❗ [id" + peerId + "|" + cache.getSenderUserChat().getNickname() + "], у вас недостаточно прав для данной команды.")
                     .execute();
         } else {
             Message replyMessage = replyMessages.get(0);
 
-            User user = User.get(manager, replyMessage.getFromId());
+            User replySender = cache.getReplySenders().get(0);
+            UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
 
-            String userName = user.getFirstName()[2] + " " + user.getLastName()[2];
+            String userName = replySender.getFirstName()[2] + " " + replySender.getLastName()[2];
 
-            UserChat userInPeerId = chatRepository.getUserFromChat(replyMessage.getFromId(), peerId);
-
-            if (userInPeerId == null) {
+            if (replySenderUserChat == null) {
                 vk.messages.send()
                         .setPeerId(peerId)
                         .setDisableMentions(true)
-                        .setMessage("❌ [id" + replyMessage.getFromId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.")
+                        .setMessage("❌ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
                         .execute();
                 return;
             }
 
-            if (userInPeerId.isBanrep()) {
+            if (replySenderUserChat.isBanrep()) {
                 chatRepository.updateBanReputation(replyMessage.getFromId(), peerId, false);
                 vk.messages.send()
                         .setPeerId(peerId)
@@ -57,7 +56,7 @@ public class UnBanRep extends AbstractCommand {
                 vk.messages.send()
                         .setPeerId(peerId)
                         .setDisableMentions(true)
-                        .setMessage("❗ У [id" + replyMessage.getFromId() + "|" + user.getFirstName()[1] + " " + user.getLastName()[1] + "] нету бана репутации.")
+                        .setMessage("❗ У [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[1] + " " + replySender.getLastName()[1] + "] нету бана репутации.")
                         .execute();
             }
         }

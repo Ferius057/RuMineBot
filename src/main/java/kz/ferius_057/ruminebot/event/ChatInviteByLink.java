@@ -3,7 +3,7 @@ package kz.ferius_057.ruminebot.event;
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
-import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
 

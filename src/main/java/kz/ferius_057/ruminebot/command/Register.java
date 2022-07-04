@@ -6,7 +6,8 @@ import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.model.response.ExtendedVkList;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.database.tool.User;
+import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public final class Register extends AbstractCommand {
     }
 
     @Override
-    public void run(User sender, Message message, String[] args) throws VkApiException {
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
         if (manager.getPeerIds().add(peerId)) {
