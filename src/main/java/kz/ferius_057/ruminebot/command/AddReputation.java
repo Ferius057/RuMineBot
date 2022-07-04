@@ -46,17 +46,23 @@ public class AddReputation extends AbstractCommand {
         }
         // Проверка есть ли бан репутации у того кто даёт репутацию
         if (!cache.getSenderUserChat().isBanrep()) {
-
-            // TODO: 04.07.2022 | сделать что бы нельзя было давать и получать репу у кого бан репы
-
-            chatRepository.giveReputation(replyMessage.getFromId(), peerId, replySenderUserChat.getReputation() + 1);
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("⚡ [id" + replyMessage.getFromId() + "|" +
-                            replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0] +
-                            "] получил +1 к репутации.")
-                    .execute();
+            if (!replySenderUserChat.isBanrep()) {
+                chatRepository.giveReputation(replyMessage.getFromId(), peerId, replySenderUserChat.getReputation() + 1);
+                vk.messages.send()
+                        .setPeerId(peerId)
+                        .setDisableMentions(true)
+                        .setMessage("⚡ [id" + replyMessage.getFromId() + "|" +
+                                replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0] +
+                                "] получил +1 к репутации.")
+                        .execute();
+            } else {
+                vk.messages.send()
+                        .setPeerId(peerId)
+                        .setDisableMentions(true)
+                        .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0]
+                                + "] не может получать репутацию, так как у него бан репутации.")
+                        .execute();
+            }
         } else {
             vk.messages.send()
                     .setPeerId(peerId)
