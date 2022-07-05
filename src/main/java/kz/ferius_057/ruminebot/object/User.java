@@ -4,11 +4,11 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.additional.NameCase;
 import kz.ferius_057.ruminebot.Manager;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,17 +18,31 @@ import java.util.List;
 
 @Getter
 @ToString
-@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class User {
     int userId;
     Object[] firstName;
     Object[] lastName;
+    List<FullName> fullName = new ArrayList<>();
     String github;
     String nicknameMinecraft;
     long date;
 
-    // TODO: 04.07.2022 | сделать fullname
+    public User(int userId, Object[] firstName, Object[] lastName, String github, String nicknameMinecraft, long date) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.github = github;
+        this.nicknameMinecraft = nicknameMinecraft;
+        this.date = date;
+
+        for (int i = 0; i < this.firstName.length; i++) {
+            FullName fullName = new FullName();
+            fullName.setNoPush(this.firstName[i] + " " + this.lastName[i]);
+            fullName.setPush("[id" + userId + "|" + this.firstName[i] + " " + this.lastName[i] + "]");
+            this.fullName.add(fullName);
+        }
+    }
 
     public static User get(final Manager manager, final int userId) throws VkApiException {
         User user = manager.localData().users.get(userId);
@@ -70,11 +84,12 @@ public class User {
                 lastName.put(response.getId(), l);
             }
         }
-        System.out.println("Сохранил " + fistName.size() + " пользователей в базе бота.");
 
         fistName.forEach((k, v) -> {
             manager.getUsers().add(k);
             manager.chatRepository().registerUserInBot(k, v, lastName.get(k));
         });
+
+        System.out.println("Сохранил " + fistName.size() + " пользователей в базе бота.");
     }
 }

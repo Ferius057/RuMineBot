@@ -35,7 +35,7 @@ public class Default extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + replySender.getUserId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
                     .execute();
             return;
         }
@@ -44,14 +44,14 @@ public class Default extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] уже имеет роль участника.")
+                    .setMessage("❗ " + replySender.getFullName().get(0).getPush() + " уже имеет роль участника.")
                     .execute();
         } else {
             chatRepository.updateRole(replyMessage.getFromId(), peerId, 0);
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("✅ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] теперь участник.")
+                    .setMessage("✅ " + replySender.getFullName().get(0).getPush() + " теперь участник.")
                     .execute();
         }
     }

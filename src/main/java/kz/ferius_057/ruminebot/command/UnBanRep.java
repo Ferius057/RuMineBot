@@ -30,13 +30,11 @@ public class UnBanRep extends AbstractCommand {
         User replySender = cache.getReplySenders().get(0);
         UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
 
-        String userName = replySender.getFirstName()[2] + " " + replySender.getLastName()[2];
-
         if (replySenderUserChat == null) {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
                     .execute();
             return;
         }
@@ -46,12 +44,12 @@ public class UnBanRep extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("✅ Снял бан репутации [id" + replyMessage.getFromId() + "|" + userName + "].").execute();
+                    .setMessage("✅ Снял бан репутации " + replySender.getFullName().get(2).getPush() + ".").execute();
         } else {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❗ У [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[1] + " " + replySender.getLastName()[1] + "] нету бана репутации.")
+                    .setMessage("❗ У " + replySender.getFullName().get(1).getPush() + " нету бана репутации.")
                     .execute();
         }
     }

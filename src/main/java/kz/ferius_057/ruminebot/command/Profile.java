@@ -30,19 +30,17 @@ public class Profile extends AbstractCommand {
     }
 
     private void profile(User user, UserChat userChat, int peerId) throws VkApiException {
-        String userName = "[id" + user.getUserId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "]";
-
         if (userChat == null) {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + user.getUserId() + "|" + user.getFirstName()[0] + " " + user.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ " + user.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
                     .execute();
             return;
         }
 
         StringBuilder text = new StringBuilder();
-        text.append("\n\uD83D\uDC8E Информация о пользователе ").append(userName).append(":");
+        text.append("\n\uD83D\uDC8E Информация о пользователе ").append(user.getFullName().get(0).getPush()).append(":");
         text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(user.getUserId());
         text.append("\n\uD83D\uDDFD Ник в беседе: ").append(userChat.getNickname());
         if (userChat.getRole() == 0) text.append("\n\uD83D\uDC51 Роль: Участник");

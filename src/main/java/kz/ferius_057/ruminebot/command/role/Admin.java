@@ -35,7 +35,7 @@ public class Admin extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + replySender.getUserId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
                     .execute();
             return;
         }
@@ -45,13 +45,13 @@ public class Admin extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("✅ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] теперь админ.")
+                    .setMessage("✅ " + replySender.getFullName().get(0).getPush() + " теперь админ.")
                     .execute();
         } else {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] уже имеет роль админа.")
+                    .setMessage("❗ " + replySender.getFullName().get(0).getPush() + " уже имеет роль админа.")
                     .execute();
         }
     }

@@ -30,11 +30,13 @@ public class ReputationTop extends AbstractCommand {
             vk.messages.send().setPeerId(message.getPeerId())
                     .setMessage("⭐ В беседе у всех 0 репутации.").execute();
         } else {
-            StringBuilder text = new StringBuilder("⭐ Топ репутации пользоватей в беседе:\n");
+            StringBuilder text = new StringBuilder("⭐ Топ репутации пользователей в беседе:\n");
 
             for (int i = 0; i < top.size(); i++) {
                 User user = User.get(manager, top.get(i).getUserId());
-                text.append(i + 1).append(". [id").append(user.getUserId()).append("|").append(user.getFirstName()[0]).append(" ").append(user.getLastName()[0]).append("] - ").append(top.get(i).getReputation()).append(" реп.\n");
+                text.append(i + 1).append(". ")
+                        .append(user.getFullName().get(0).getPush()).append(" - ").append(top.get(i).getReputation())
+                        .append(" реп.\n");
             }
 
             vk.messages.send().setPeerId(message.getPeerId()).setDisableMentions(true)

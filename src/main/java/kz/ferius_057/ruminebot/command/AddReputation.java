@@ -32,7 +32,7 @@ public class AddReputation extends AbstractCommand {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❌ [id" + replyMessage.getFromId() + "|" + replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .setMessage("❌ " + replySenderUser.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
                     .execute();
             return;
         }
@@ -51,16 +51,13 @@ public class AddReputation extends AbstractCommand {
                 vk.messages.send()
                         .setPeerId(peerId)
                         .setDisableMentions(true)
-                        .setMessage("⚡ [id" + replyMessage.getFromId() + "|" +
-                                replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0] +
-                                "] получил +1 к репутации.")
+                        .setMessage("⚡ " + replySenderUser.getFullName().get(0).getPush() + " получил +1 к репутации.")
                         .execute();
             } else {
                 vk.messages.send()
                         .setPeerId(peerId)
                         .setDisableMentions(true)
-                        .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySenderUser.getFirstName()[0] + " " + replySenderUser.getLastName()[0]
-                                + "] не может получать репутацию, так как у него бан репутации.")
+                        .setMessage("❗ " + replySenderUser.getFullName().get(0).getPush() + " не может получать репутацию, так как у него бан репутации.")
                         .execute();
             }
         } else {
