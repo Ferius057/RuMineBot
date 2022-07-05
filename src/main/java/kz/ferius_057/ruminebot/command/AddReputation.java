@@ -44,7 +44,7 @@ public class AddReputation extends AbstractCommand {
                     .setMessage("❌ Выдавать репутацию самому себе запрещено.").execute();
             return;
         }
-        // Проверка есть ли бан репутации у того кто даёт репутацию
+
         if (!cache.getSenderUserChat().isBanrep()) {
             if (!replySenderUserChat.isBanrep()) {
                 chatRepository.giveReputation(replyMessage.getFromId(), peerId, replySenderUserChat.getReputation() + 1);

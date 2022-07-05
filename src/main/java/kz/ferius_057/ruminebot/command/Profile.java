@@ -46,7 +46,7 @@ public class Profile extends AbstractCommand {
         text.append("\n\uD83C\uDD94 ID Профиля VK: ").append(user.getUserId());
         text.append("\n\uD83D\uDDFD Ник в беседе: ").append(userChat.getNickname());
         if (userChat.getRole() == 0) text.append("\n\uD83D\uDC51 Роль: Участник");
-        else if (userChat.getRole() == 1) text.append("\n\uD83D\uDC51 Роль: Админ");
+        else text.append("\n\uD83D\uDC51 Роль: Админ");
         text.append("\n✳ Репутации: ").append(userChat.getReputation());
         if (userChat.isBanrep()) text.append("\n⭕ Бан Репутации: Есть");
         else text.append("\n⭕ Бан Репутации: Нету");

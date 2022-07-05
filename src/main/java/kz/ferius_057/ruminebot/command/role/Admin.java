@@ -4,6 +4,7 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 
 import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.command.api.Permission;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * @author Charles_Grozny
  */
+@Permission(value = 1)
 public class Admin extends AbstractCommand {
 
     public Admin(Manager Manager) {
@@ -24,42 +26,33 @@ public class Admin extends AbstractCommand {
     public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        if (cache.getSenderUserChat().getRole() < 1) {
+        Message replyMessage = replyMessages.get(0);
+
+        User replySender = cache.getReplySenders().get(0);
+        UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
+
+        if (replySenderUserChat == null) {
             vk.messages.send()
                     .setPeerId(peerId)
                     .setDisableMentions(true)
-                    .setMessage("❗ [id" + message.getFromId() + "|" + cache.getSenderUserChat().getNickname() + "], у вас недостаточно прав для данной команды.")
+                    .setMessage("❌ [id" + replySender.getUserId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
+                    .execute();
+            return;
+        }
+
+        if (replySenderUserChat.getRole() == 0) {
+            chatRepository.updateRole(replyMessage.getFromId(), peerId, 1);
+            vk.messages.send()
+                    .setPeerId(peerId)
+                    .setDisableMentions(true)
+                    .setMessage("✅ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] теперь админ.")
                     .execute();
         } else {
-            Message replyMessage = replyMessages.get(0);
-
-            User replySender = cache.getReplySenders().get(0);
-            UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
-
-            if (replySenderUserChat == null) {
-                vk.messages.send()
-                        .setPeerId(peerId)
-                        .setDisableMentions(true)
-                        .setMessage("❌ [id" + replySender.getUserId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] отсутствует в этой беседе.")
-                        .execute();
-                return;
-            }
-
-            if (replySenderUserChat.getRole() == 0) {
-                chatRepository.updateRole(replyMessage.getFromId(), peerId, 1);
-                vk.messages.send()
-                        .setPeerId(peerId)
-                        .setDisableMentions(true)
-                        .setMessage("✅ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] теперь админ.")
-                        .execute();
-            } else {
-                vk.messages.send()
-                        .setPeerId(peerId)
-                        .setDisableMentions(true)
-                        .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] уже имеет роль админа.")
-                        .execute();
-            }
-
+            vk.messages.send()
+                    .setPeerId(peerId)
+                    .setDisableMentions(true)
+                    .setMessage("❗ [id" + replyMessage.getFromId() + "|" + replySender.getFirstName()[0] + " " + replySender.getLastName()[0] + "] уже имеет роль админа.")
+                    .execute();
         }
     }
 }

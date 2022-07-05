@@ -7,7 +7,6 @@ import kz.ferius_057.ruminebot.command.*;
 import kz.ferius_057.ruminebot.command.role.Admin;
 import kz.ferius_057.ruminebot.command.role.Default;
 import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.object.UserChat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -77,6 +76,7 @@ public final class SimpleCommandManager implements CommandManager {
             cacheDataMessage.setSender(User.get(manager, message.getFromId()));
             cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
 
+                if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId())) return true;
 
             if (messages.size() == 0)
                 command.run(cacheDataMessage, message, args);
@@ -98,7 +98,6 @@ public final class SimpleCommandManager implements CommandManager {
             e.printStackTrace();
         }
 
-
         return true;
     }
 
@@ -119,6 +118,19 @@ public final class SimpleCommandManager implements CommandManager {
             messages.add(0, message.getReplyMessage());
 
         return messages;
+    }
+
+
+    private boolean checkPermission(Command command, User user, UserChat userChat, int peerId) throws VkApiException {
+        Permission declaredAnnotation = command.getClass().getDeclaredAnnotation(Permission.class);
+        if (declaredAnnotation != null && userChat.getRole() < declaredAnnotation.value()) {
+            manager.vk().messages.send()
+                    .setPeerId(peerId)
+                    .setDisableMentions(true)
+                    .setMessage("❗ [id" + user.getUserId() + "|" + cacheDataMessage.getSender().getFirstName()[0] + "], у вас недостаточно прав для данной команды.")
+                    .execute();
+            return false;
+        } else return true;
     }
 
 

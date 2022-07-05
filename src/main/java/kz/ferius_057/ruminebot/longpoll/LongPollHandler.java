@@ -12,6 +12,8 @@ import kz.ferius_057.ruminebot.event.api.SimpleEventManager;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
+import java.util.logging.Logger;
+
 
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class LongPollHandler extends LongPollBot {
@@ -33,6 +35,8 @@ public class LongPollHandler extends LongPollBot {
 
         this.commandManager = commandManager;
         this.eventManager = eventManager;
+
+        System.out.println("Started!");
     }
 
     @Override
@@ -41,7 +45,7 @@ public class LongPollHandler extends LongPollBot {
         if (message.hasText()) {
             System.out.println("[*] New message: " + message.getText()
                     + " | " + message.getPeerId()
-                    + " | " + message.getFromId());
+                    + " | " + message.getFromId() + " - " + message);
 
             if (!commandManager.run(message)) {
                 if (message.getAction() != null) {
