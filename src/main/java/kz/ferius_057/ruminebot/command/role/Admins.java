@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.role;
 
 import kz.ferius_057.ruminebot.Manager;
 import api.longpoll.bots.model.objects.basic.Message;
@@ -16,7 +16,7 @@ import java.util.List;
 public class Admins extends AbstractCommand {
 
     public Admins(Manager Manager) {
-        super(Manager, "admins", "админы");
+        super(Manager, "admins", "админы", "staff", "staffs");
     }
 
     @Override

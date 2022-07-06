@@ -6,6 +6,7 @@ import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.*;
 import kz.ferius_057.ruminebot.command.reputation.*;
 import kz.ferius_057.ruminebot.command.role.Admin;
+import kz.ferius_057.ruminebot.command.role.Admins;
 import kz.ferius_057.ruminebot.command.role.Default;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
