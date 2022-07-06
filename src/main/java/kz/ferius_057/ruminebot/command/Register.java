@@ -10,6 +10,7 @@ import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class Register extends AbstractCommand {
     public Register(Manager Manager) {
@@ -69,5 +70,10 @@ public final class Register extends AbstractCommand {
                     .setMessage("Ваша беседа уже зарегистрирована!")
                     .execute();
         }
+    }
+
+    @Override
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        run(cache, message, args);
     }
 }

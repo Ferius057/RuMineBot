@@ -8,6 +8,7 @@ import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * @author Charles_Grozny
@@ -37,5 +38,10 @@ public class Uptime extends AbstractCommand {
                 .setPeerId(message.getPeerId())
                 .setMessage("✅Бот работает\nВремя запуска: " + localData.getTimeStart() + " GMT+3\n" + time)
                 .execute();
+    }
+
+    @Override
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        run(cache, message, args);
     }
 }

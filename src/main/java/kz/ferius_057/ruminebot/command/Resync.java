@@ -75,4 +75,9 @@ public class Resync extends AbstractCommand {
                 .setMessage("Данные беседы были обновлены.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.")
                 .execute();
     }
+
+    @Override
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        run(cache, message, args);
+    }
 }
