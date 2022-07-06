@@ -31,7 +31,7 @@ public interface ChatRepository {
     void updateBanReputation(final int userId, final int peerId, final boolean banrep);
 
     // Обновляет данные пользователя в беседе | USERS
-    void giveReputation(final int userId, final int peerId, final int reputation);
+    void setReputation(final int userId, final int peerId, final int reputation);
 
     // Получает все админов из беседы | USERS
     List<UserChat> getAdminsFromChat(final int peerId);

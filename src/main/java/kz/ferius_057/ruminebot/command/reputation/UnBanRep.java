@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.reputation;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;

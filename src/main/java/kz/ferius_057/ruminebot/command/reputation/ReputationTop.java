@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.reputation;
 
 import kz.ferius_057.ruminebot.Manager;
 import api.longpoll.bots.model.objects.basic.Message;

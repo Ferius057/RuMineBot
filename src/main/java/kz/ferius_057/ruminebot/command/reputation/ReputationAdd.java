@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.command;
+package kz.ferius_057.ruminebot.command.reputation;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * @author Charles_Grozny
  */
-public class AddReputation extends AbstractCommand {
+public class ReputationAdd extends AbstractCommand {
 
-    public AddReputation(Manager Manager) {
+    public ReputationAdd(Manager Manager) {
         super(Manager, "+reputation", "+rep", "+репутация", "+реп");
     }
 
@@ -47,11 +47,12 @@ public class AddReputation extends AbstractCommand {
 
         if (!cache.getSenderUserChat().isBanrep()) {
             if (!replySenderUserChat.isBanrep()) {
-                chatRepository.giveReputation(replyMessage.getFromId(), peerId, replySenderUserChat.getReputation() + 1);
+                chatRepository.setReputation(replyMessage.getFromId(), peerId, replySenderUserChat.getReputation() + 1);
                 vk.messages.send()
                         .setPeerId(peerId)
                         .setDisableMentions(true)
-                        .setMessage("⚡ " + replySenderUser.getFullName().get(0).getPush() + " получил +1 к репутации.")
+                        .setMessage("⚡ " + replySenderUser.getFullName().get(0).getPush() + " получил +1 к репутации." +
+                                "\n⋞ " + replySenderUserChat.getReputation() + " ⋟  ➤  ⋞ " + (replySenderUserChat.getReputation() + 1) + " ⋟")
                         .execute();
             } else {
                 vk.messages.send()

@@ -120,7 +120,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public void giveReputation(int userId, int peerId, int reputation) {
+    public void setReputation(int userId, int peerId, int reputation) {
         database.executeUpdate("UPDATE users SET reputation=(?) " +
                 "WHERE userId=(?) and peerId=(?)", reputation, userId, peerId);
     }

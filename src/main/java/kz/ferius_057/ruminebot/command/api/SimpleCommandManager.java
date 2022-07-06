@@ -4,6 +4,7 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.*;
+import kz.ferius_057.ruminebot.command.reputation.*;
 import kz.ferius_057.ruminebot.command.role.Admin;
 import kz.ferius_057.ruminebot.command.role.Default;
 import kz.ferius_057.ruminebot.object.User;
@@ -26,18 +27,24 @@ public final class SimpleCommandManager implements CommandManager {
         CommandManager commandManager = new SimpleCommandManager(manager, new HashMap<>());
         commandManager.register(new Register(manager));
         commandManager.register(new Resync(manager));
-        commandManager.register(new AddReputation(manager));
-        commandManager.register(new Profile(manager));
+
+        commandManager.register(new ReputationTop(manager));
+        commandManager.register(new ReputationAdd(manager));
+        commandManager.register(new ReputationSet(manager));
         commandManager.register(new BanRep(manager));
         commandManager.register(new UnBanRep(manager));
-        commandManager.register(new Uptime(manager));
+
+        commandManager.register(new Admins(manager));
         commandManager.register(new Admin(manager));
         commandManager.register(new Default(manager));
-        commandManager.register(new Admins(manager));
-        commandManager.register(new ReputationTop(manager));
+
+        commandManager.register(new Uptime(manager));
+        commandManager.register(new Help(manager));
+
+        commandManager.register(new Profile(manager));
+
         commandManager.register(new AddGithub(manager));
         commandManager.register(new AddNickNameMinecraft(manager));
-        commandManager.register(new Help(manager));
 
         return commandManager;
     }
