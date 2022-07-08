@@ -2,12 +2,11 @@ package kz.ferius_057.ruminebot.command.reputation;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
-import kz.ferius_057.ruminebot.command.api.Permission;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.Permission;
+import lombok.val;
 
 import java.util.List;
 
@@ -17,53 +16,36 @@ import java.util.List;
  */
 
 @Permission(value = 1)
+@CommandAnnotation(aliases = { "reputationset", "repset", "репсет", "setrep", "сетреп" })
 public class ReputationSet extends AbstractCommand {
-
-    public ReputationSet(Manager manager) {
-        super(manager, "reputationset", "repset", "репсет", "setrep", "сетреп");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        int peerId = message.getPeerId();
+        val peerId = message.getPeerId();
+        val replySender = cache.getReplySenders().get(0);
+        val replySenderUserChat = cache.getReplySendersUserChat().get(0);
 
-        User replySender = cache.getReplySenders().get(0);
-        UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
+        String msg;
+        if (replySenderUserChat != null && replySenderUserChat.isExist()) {
+            if (args.length > 0) {
+                try {
+                    val repValue = Integer.parseInt(args[0]);
 
-        if (replySenderUserChat == null || !replySenderUserChat.isExist()) {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
-                    .execute();
-            return;
-        }
+                    chatRepository.setReputation(replySender.getUserId(), peerId, repValue);
 
-        if (args.length <= 0) {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❗ Вы не указали кол-во репутации первым аргументом.")
-                    .execute();
-            return;
-        }
+                    msg = "✴ " + replySender.getFullName().get(2).getPush() + " было установлено " + repValue + " репутации." +
+                            "\n⋞ " + replySenderUserChat.getReputation() + " ⋟  ➤  ⋞ " + repValue + " ⋟";
+                } catch (NumberFormatException e) {
+                    msg = "❗ Вы указали неверное кол-во репутации.";
+                }
+            } else msg = "❗ Вы не указали кол-во репутации первым аргументом.";
+        } else msg = "❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.";
 
-        try {
-            int repValue = Integer.parseInt(args[0]);
-
-            chatRepository.setReputation(replySender.getUserId(), message.getPeerId(), repValue);
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("✴ " + replySender.getFullName().get(2).getPush() + " было установлено " + repValue + " репутации." +
-                            "\n⋞ " + replySenderUserChat.getReputation() + " ⋟  ➤  ⋞ " + (repValue) + " ⋟")
-                    .execute();
-        } catch (NumberFormatException e) {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❗ Вы указали неверное кол-во репутации.")
-                    .execute();
-        }
+        vk.messages.send()
+                .setPeerId(peerId)
+                .setDisableMentions(true)
+                .setMessage(msg)
+                .execute();
     }
+
 }

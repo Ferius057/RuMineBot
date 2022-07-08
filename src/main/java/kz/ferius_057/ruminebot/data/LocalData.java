@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.val;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,9 +18,8 @@ import java.util.TimeZone;
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PUBLIC)
 public class LocalData {
+
     HashMap<Integer, User> users = new HashMap<>(); // TODO: 04.07.2022 | сделать что бы обновлялось
-
-
 
     @Setter
     @NonFinal
@@ -29,9 +29,10 @@ public class LocalData {
     private String timeStart = makeTextTime();
 
     private String makeTextTime() {
-        long timeStartMs = System.currentTimeMillis();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        val timeStartMs = System.currentTimeMillis();
+        val simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+3"));
         return simpleDateFormat.format(new Date(timeStartMs));
     }
+
 }

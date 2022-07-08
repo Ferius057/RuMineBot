@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.data;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Getter
 public final class Config {
     int groupId;
     String token;
@@ -22,21 +24,13 @@ public final class Config {
         this.fileNameDataBase = fileNameDataBase;
     }
 
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
     public static Config load(final Path path) throws IOException {
         Properties properties = new Properties();
 
         if (Files.exists(path)) {
-                try (final InputStream input = Files.newInputStream(path)) {
-                    properties.load(input);
-                }
+            try (final InputStream input = Files.newInputStream(path)) {
+                properties.load(input);
+            }
         } else {
             properties.setProperty("id_group", "1");
             properties.setProperty("token", "");

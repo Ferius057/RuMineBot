@@ -3,7 +3,6 @@ package kz.ferius_057.ruminebot;
 import api.longpoll.bots.methods.VkBotsMethods;
 import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepository;
-import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 
 import java.util.Set;
 

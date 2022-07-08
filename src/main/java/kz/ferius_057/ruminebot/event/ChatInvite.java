@@ -2,33 +2,29 @@ package kz.ferius_057.ruminebot.event;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
+import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
+import kz.ferius_057.ruminebot.object.User;
+import lombok.val;
 
 /**
  * @author Charles_Grozny
  */
+@EventAnnotation(statuses = MessageActionStatus.CHAT_INVITE_USER)
 public class ChatInvite extends AbstractEvent {
-
-    public ChatInvite(final Manager manager) {
-        super(manager, MessageActionStatus.CHAT_INVITE_USER);
-    }
 
     @Override
     public void run(Message message, Message.Action action) throws VkApiException {
-        if (action.getMemberId() >= 0) {
-            UserChat userInPeerId = chatRepository.getUserFromChat(action.getMemberId(), message.getPeerId());
-            if (userInPeerId != null) {
+        if (action.getMemberId() < 0) return;
 
-                chatRepository.updateExist(message.getFromId(), message.getPeerId(), true);
-            } else {
-                User user = User.get(manager, action.getMemberId());
+        val memberId = action.getMemberId();
+        val peerId = message.getPeerId();
 
-                chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(),0);
-            }
-        }
+        if (chatRepository.getUserFromChat(memberId, peerId) != null)
+            chatRepository.updateExist(message.getFromId(), peerId, true);
+        else
+            chatRepository.addUserInPeerId(memberId, peerId, User.get(manager, memberId).getFirstName()[0].toString(), 0);
     }
+
 }

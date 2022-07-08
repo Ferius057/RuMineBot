@@ -2,10 +2,10 @@ package kz.ferius_057.ruminebot.command;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.List;
@@ -13,11 +13,8 @@ import java.util.List;
 /**
  * @author Charles_Grozny
  */
+@CommandAnnotation(aliases = { "profile", "account", "профиль", "аккаунт", "стат" })
 public class Profile extends AbstractCommand {
-
-    public Profile(Manager Manager) {
-        super(Manager,"profile", "account","профиль","аккаунт","стат");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {

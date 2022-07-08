@@ -7,7 +7,6 @@ import api.longpoll.bots.model.objects.basic.Message;
  * @author Charles_Grozny
  */
 public interface Event {
-    MessageActionStatus getEventName();
 
     void run(Message message, Message.Action action) throws VkApiException;
 }

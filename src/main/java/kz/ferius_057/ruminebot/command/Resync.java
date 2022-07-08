@@ -4,11 +4,11 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.methods.impl.messages.GetConversationMembers;
 import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.model.response.ExtendedVkList;
-import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.api.Permission;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.Permission;
+import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
 
 import java.util.ArrayList;
@@ -18,16 +18,12 @@ import java.util.List;
  * @author Charles_Grozny
  */
 @Permission(value = 1)
+@CommandAnnotation(aliases = { "resync", "обновить", "update" })
 public class Resync extends AbstractCommand {
-
-    public Resync(Manager Manager) {
-        super(Manager, "resync", "обновить", "update");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
-
 
         ExtendedVkList<GetConversationMembers.Response.Item> response;
 

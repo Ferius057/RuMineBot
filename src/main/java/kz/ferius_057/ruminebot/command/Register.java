@@ -4,24 +4,25 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.methods.impl.messages.GetConversationMembers;
 import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.model.response.ExtendedVkList;
-import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.object.User;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@CommandAnnotation(aliases = { "reg", "register" })
 public final class Register extends AbstractCommand {
-    public Register(Manager Manager) {
-        super(Manager,"reg", "register");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
         if (manager.getPeerIds().add(peerId)) {
+            long start = System.currentTimeMillis();
+
             ExtendedVkList<GetConversationMembers.Response.Item> response;
 
             response = vk.messages.getConversationMembers()
@@ -29,22 +30,18 @@ public final class Register extends AbstractCommand {
                     .setFields("first_name_nom")
                     .execute().getResponseObject();
 
-            long start = System.currentTimeMillis();
+            ArrayList<String> users = new ArrayList<>(), admins = new ArrayList<>();
 
-            ArrayList<String> users = new ArrayList<>();
-            ArrayList<String> admins = new ArrayList<>();
+            response.getItems()
+                    .stream()
+                    .filter(item -> item.getAdmin() != null)
+                    .forEach(item -> admins.add(item.getMemberId().toString()));
 
-            response.getItems().forEach(s -> {
-                if (s.getAdmin() != null) admins.add(s.getMemberId().toString());
-            });
+            response.getProfiles().forEach(profile -> {
+                val id = profile.getId();
+                users.add(id.toString());
 
-            response.getProfiles().forEach(s -> {
-                users.add(s.getId().toString());
-                if (admins.contains(s.getId().toString())) {
-                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
-                } else {
-                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 0);
-                }
+                chatRepository.addUserInPeerId(id, peerId, profile.getFirstName(), admins.contains(id.toString()) ? 1 : 0);
             });
 
             for (int i = 0; i < users.size(); i++) {

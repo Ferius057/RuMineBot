@@ -2,29 +2,31 @@ package kz.ferius_057.ruminebot.event.api;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
-import kz.ferius_057.ruminebot.event.ChatInvite;
-import kz.ferius_057.ruminebot.event.ChatInviteByLink;
-import kz.ferius_057.ruminebot.event.ChatKick;
+import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
+import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-    public final class SimpleEventManager implements EventManager {
-        Map<String, Event> eventMap;
+public final class SimpleEventManager implements EventManager {
+    Map<String, Event> eventMap;
 
-    private SimpleEventManager(final Map<String, Event> eventMap) {
-        this.eventMap = eventMap;
-    }
+    @SneakyThrows
+    public static EventManager create() {
+        val commandManager = new SimpleEventManager(new HashMap<>());
+        List<Class<?>> classesInPackage = AccessingAllClassesInPackage.getClassesEvent("kz.ferius_057.ruminebot.event");
+        for (val clazz : classesInPackage)
+            commandManager.register((Event) clazz.getConstructor().newInstance());
 
-    public static EventManager create(final Manager manager) {
-        EventManager commandManager = new SimpleEventManager(new HashMap<>());
-        commandManager.register(new ChatInvite(manager));
-        commandManager.register(new ChatKick(manager));
-        commandManager.register(new ChatInviteByLink(manager));
+        System.out.printf("Зарегистрировано %d событий.\n", classesInPackage.size());
 
         return commandManager;
     }
@@ -44,6 +46,7 @@ import java.util.Map;
 
     @Override
     public void register(final Event event) {
-        eventMap.put(event.getEventName().getValue(), event);
+        for (val status : event.getClass().getAnnotation(EventAnnotation.class).statuses())
+            eventMap.put(status.getValue(), event);
     }
 }

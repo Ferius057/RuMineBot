@@ -1,11 +1,10 @@
 package kz.ferius_057.ruminebot.command;
 
-import kz.ferius_057.ruminebot.Manager;
-import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 
 import java.time.Duration;
 import java.util.List;
@@ -13,11 +12,8 @@ import java.util.List;
 /**
  * @author Charles_Grozny
  */
+@CommandAnnotation(aliases = { "uptime", "аптайм", "бот" })
 public class Uptime extends AbstractCommand {
-
-    public Uptime(Manager Manager) {
-        super(Manager, "uptime", "аптайм","бот");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {

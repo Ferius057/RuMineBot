@@ -1,7 +1,6 @@
 package kz.ferius_057.ruminebot.database;
 
 import java.sql.*;
-import java.util.Arrays;
 
 public final class Database {
 
@@ -24,10 +23,7 @@ public final class Database {
         }
     }
 
-    public void executeUpdate(
-            final String query,
-            final Object... parameters
-    ) {
+    public void executeUpdate(final String query, final Object... parameters) {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
@@ -46,11 +42,7 @@ public final class Database {
             }
         }
     }
-    public <T> T executeQuery(
-            final ThrowableFunction<ResultSet, T, SQLException> reader,
-            final String query,
-            final Object... parameters
-    ) {
+    public <T> T executeQuery(final ThrowableFunction<ResultSet, T, SQLException> reader, final String query, final Object... parameters) {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 

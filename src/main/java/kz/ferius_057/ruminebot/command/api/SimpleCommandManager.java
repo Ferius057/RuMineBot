@@ -3,49 +3,39 @@ package kz.ferius_057.ruminebot.command.api;
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
-import kz.ferius_057.ruminebot.command.*;
-import kz.ferius_057.ruminebot.command.reputation.*;
-import kz.ferius_057.ruminebot.command.role.Admin;
-import kz.ferius_057.ruminebot.command.role.Admins;
-import kz.ferius_057.ruminebot.command.role.Default;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.Permission;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class SimpleCommandManager implements CommandManager {
+
     Manager manager;
     Map<String, Command> commandMap;
 
     CacheDataMessage cacheDataMessage = new CacheDataMessage();
 
+    @SneakyThrows
     public static CommandManager create(final Manager manager) {
-        CommandManager commandManager = new SimpleCommandManager(manager, new HashMap<>());
-        commandManager.register(new Register(manager));
-        commandManager.register(new Resync(manager));
+        val commandManager = new SimpleCommandManager(manager, new HashMap<>());
+        List<Class<?>> classesInPackage = AccessingAllClassesInPackage.getClassesCommand("kz.ferius_057.ruminebot.command");
+        for (val clazz : classesInPackage)
+            commandManager.register((Command) clazz.getConstructor().newInstance());
 
-        commandManager.register(new ReputationTop(manager));
-        commandManager.register(new ReputationAdd(manager));
-        commandManager.register(new ReputationSet(manager));
-        commandManager.register(new BanRep(manager));
-        commandManager.register(new UnBanRep(manager));
-
-        commandManager.register(new Admins(manager));
-        commandManager.register(new Admin(manager));
-        commandManager.register(new Default(manager));
-
-        commandManager.register(new Uptime(manager));
-        commandManager.register(new Help(manager));
-
-        commandManager.register(new Profile(manager));
-
-        commandManager.register(new AddGithub(manager));
-        commandManager.register(new AddNickNameMinecraft(manager));
+        System.out.printf("Зарегистрировано %d команд.\n", classesInPackage.size());
 
         return commandManager;
     }
@@ -55,23 +45,18 @@ public final class SimpleCommandManager implements CommandManager {
         String text = message.getText();
 
         Command command;
-        String[] args;
+        String[] params, args;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {
-            if (commandMap.get(text.split(" ")[0].toLowerCase()) != null && text.charAt(0) == '+') {
-                String[] params = text.substring(1).split(" ");
+            if (commandMap.get(text.split(" ")[0].toLowerCase()) == null || text.charAt(0) != '+') return false;
 
-                command = commandMap.get(text.split(" ")[0].toLowerCase());
-
-                args = Arrays.copyOfRange(params, 1, params.length);
-            } else return false;
+            params = text.substring(1).split(" ");
+            command = commandMap.get(text.split(" ")[0].toLowerCase());
         } else {
-            String[] params = text.substring(1).split(" ");
-
+            params = text.substring(1).split(" ");
             command = commandMap.get(params[0].toLowerCase());
-
-            args = Arrays.copyOfRange(params, 1, params.length);
         }
+        args = Arrays.copyOfRange(params, 1, params.length);
 
         if (command == null) return true;
 
@@ -84,7 +69,8 @@ public final class SimpleCommandManager implements CommandManager {
             cacheDataMessage.setSender(User.get(manager, message.getFromId()));
             cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
 
-                if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId())) return true;
+            if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId()))
+                return true;
 
             if (messages.size() == 0)
                 command.run(cacheDataMessage, message, args);
@@ -111,37 +97,29 @@ public final class SimpleCommandManager implements CommandManager {
 
     @Override
     public void register(final Command command) {
-        commandMap.put(command.getName(), command);
-
-        for (String alias : command.getAliases())
+        for (val alias : command.getClass().getAnnotation(CommandAnnotation.class).aliases())
             commandMap.put(alias, command);
     }
 
-
-
     private List<Message> replyMessage(Message message) {
-        List<Message> messages = message.getFwdMessages();
-
-        if (message.getReplyMessage() != null)
-            messages.add(0, message.getReplyMessage());
+        val messages = message.getFwdMessages();
+        if (message.getReplyMessage() != null) messages.add(0, message.getReplyMessage());
 
         return messages;
     }
 
 
     private boolean checkPermission(Command command, User user, UserChat userChat, int peerId) throws VkApiException {
-        Permission declaredAnnotation = command.getClass().getDeclaredAnnotation(Permission.class);
-        if (declaredAnnotation != null && userChat.getRole() < declaredAnnotation.value()) {
-            manager.vk().messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❗ [id" + user.getUserId() + "|" + cacheDataMessage.getSender().getFirstName()[0] + "], у вас недостаточно прав для данной команды.")
-                    .execute();
-            return false;
-        } else return true;
+        val declaredAnnotation = command.getClass().getDeclaredAnnotation(Permission.class);
+        if (declaredAnnotation == null || userChat.getRole() >= declaredAnnotation.value()) return true;
+
+        manager.vk().messages.send()
+                .setPeerId(peerId)
+                .setDisableMentions(true)
+                .setMessage("❗ [id" + user.getUserId() + "|" + cacheDataMessage.getSender().getFirstName()[0] + "], у вас недостаточно прав для данной команды.")
+                .execute();
+        return false;
     }
-
-
 
   /*
    TODO: 27.06.2022 | переписать это говно

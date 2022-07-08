@@ -2,6 +2,7 @@ package kz.ferius_057.ruminebot.database;
 
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,18 +46,13 @@ public class ChatRepositoryImpl implements ChatRepository {
                 ");");
     }
 
-
-
     @Override
     public Set<Integer> getChats() {
         return database.executeQuery(
                 rs -> {
-                    Set<Integer> result = new HashSet<>();
+                    val result = new HashSet<Integer>();
 
-                    while (rs.next()) {
-                        result.add(rs.getInt("peerId"));
-                    }
-
+                    while (rs.next()) result.add(rs.getInt("peerId"));
                     return result;
                 },
                 "SELECT peerId FROM peerIds;"
@@ -67,21 +63,15 @@ public class ChatRepositoryImpl implements ChatRepository {
     public Set<Integer> getUsers() {
         return database.executeQuery(
                 rs -> {
-                    Set<Integer> result = new HashSet<>();
+                    val result = new HashSet<Integer>();
 
-                    while (rs.next()) {
-                        result.add(rs.getInt("userId"));
-                    }
+                    while (rs.next()) result.add(rs.getInt("userId"));
 
                     return result;
                 },
                 "SELECT userId FROM usersData;"
         );
     }
-
-
-
-
 
     @Override
     public void createChat(int peerId) {
@@ -132,13 +122,21 @@ public class ChatRepositoryImpl implements ChatRepository {
                     List<UserChat> userInPeerId = new ArrayList<>();
 
                     while (rs.next()) {
-                        userInPeerId.add(new UserChat(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4),
-                                rs.getInt(5), rs.getBoolean(6), rs.getBoolean(7)));
+                        userInPeerId.add(
+                                new UserChat(
+                                        rs.getInt(1),
+                                        rs.getInt(2),
+                                        rs.getString(3),
+                                        rs.getInt(4),
+                                        rs.getInt(5),
+                                        rs.getBoolean(6),
+                                        rs.getBoolean(7))
+                        );
                     }
 
                     return userInPeerId;
                 },
-                "SELECT * FROM users WHERE peerId=(?) and role=(?)",  peerId, 1
+                "SELECT * FROM users WHERE peerId=(?) and role=(?)", peerId, 1
         );
     }
 
@@ -149,8 +147,17 @@ public class ChatRepositoryImpl implements ChatRepository {
                     List<UserChat> userInPeerId = new ArrayList<>();
 
                     while (rs.next()) {
-                        userInPeerId.add(new UserChat(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4),
-                                rs.getInt(5), rs.getBoolean(6), rs.getBoolean(7)));
+                        userInPeerId.add(
+                                new UserChat(
+                                        rs.getInt(1),
+                                        rs.getInt(2),
+                                        rs.getString(3),
+                                        rs.getInt(4),
+                                        rs.getInt(5),
+                                        rs.getBoolean(6),
+                                        rs.getBoolean(7)
+                                )
+                        );
                     }
 
                     return userInPeerId;
@@ -166,8 +173,15 @@ public class ChatRepositoryImpl implements ChatRepository {
                     UserChat userInPeerId = null;
 
                     while (rs.next()) {
-                        userInPeerId = new UserChat(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getInt(4),
-                                rs.getInt(5), rs.getBoolean(6), rs.getBoolean(7));
+                        userInPeerId = new UserChat(
+                                rs.getInt(1),
+                                rs.getInt(2),
+                                rs.getString(3),
+                                rs.getInt(4),
+                                rs.getInt(5),
+                                rs.getBoolean(6),
+                                rs.getBoolean(7)
+                        );
                     }
 
                     return userInPeerId;
@@ -175,9 +189,6 @@ public class ChatRepositoryImpl implements ChatRepository {
                 "SELECT * FROM users WHERE userId=(?) and peerId=(?)", userId, peerId
         );
     }
-
-
-
 
 
     @Override
@@ -193,8 +204,14 @@ public class ChatRepositoryImpl implements ChatRepository {
                     User user = null;
 
                     while (rs.next()) {
-                        user = new User(rs.getInt(1), (Object[]) rs.getArray(2).getArray(), (Object[]) rs.getArray(3).getArray(),
-                                rs.getString(4), rs.getString(5), rs.getLong(6));
+                        user = new User(
+                                rs.getInt(1),
+                                (Object[]) rs.getArray(2).getArray(),
+                                (Object[]) rs.getArray(3).getArray(),
+                                rs.getString(4),
+                                rs.getString(5),
+                                rs.getLong(6)
+                        );
                     }
 
                     return user;

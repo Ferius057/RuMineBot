@@ -49,8 +49,7 @@ public interface ChatRepository {
     // Получает пользователя из базы бота | USERSDATA
     User getUser(final int userId);
 
-
-
     Set<Integer> getChats();
     Set<Integer> getUsers();
+
 }

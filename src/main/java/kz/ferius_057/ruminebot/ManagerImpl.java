@@ -5,6 +5,7 @@ import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
@@ -16,30 +17,17 @@ import java.util.Set;
 
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Getter
 public class ManagerImpl implements Manager {
 
     ChatRepository chatRepository;
-
-    Set<Integer> peerIds;
-    Set<Integer> users;
-
+    Set<Integer> peerIds, users;
     VkBotsMethods vk;
-
     LocalData localData;
 
     @Override
     public ChatRepository chatRepository() {
         return chatRepository;
-    }
-
-    @Override
-    public Set<Integer> getPeerIds() {
-        return peerIds;
-    }
-
-    @Override
-    public Set<Integer> getUsers() {
-        return users;
     }
 
     @Override
@@ -51,4 +39,5 @@ public class ManagerImpl implements Manager {
     public LocalData localData() {
         return localData;
     }
+
 }

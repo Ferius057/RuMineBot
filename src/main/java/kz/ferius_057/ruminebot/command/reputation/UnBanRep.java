@@ -2,12 +2,11 @@ package kz.ferius_057.ruminebot.command.reputation;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.api.Permission;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.Permission;
+import lombok.val;
 
 import java.util.List;
 
@@ -15,42 +14,28 @@ import java.util.List;
  * @author Charles_Grozny
  */
 @Permission(value = 1)
+@CommandAnnotation(aliases = { "unbanrep", "repunban", "разбанреп", "репразбан" })
 public class UnBanRep extends AbstractCommand {
-
-    public UnBanRep(Manager Manager) {
-        super(Manager, "unbanrep", "repunban", "разбанреп", "репразбан");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        int peerId = message.getPeerId();
+        val peerId = message.getPeerId();
+        val replySenderUserChat = cache.getReplySendersUserChat().get(0);
+        val fullName = cache.getReplySenders().get(0).getFullName();
 
-        Message replyMessage = replyMessages.get(0);
+        String msg;
+        if(replySenderUserChat != null) {
+            if(replySenderUserChat.isBanrep()) {
+                chatRepository.updateBanReputation(replyMessages.get(0).getFromId(), peerId, false);
+                msg = "✅ Снял бан репутации " + fullName.get(2).getPush() + ".";
+            } else msg = "❗ У " + fullName.get(1).getPush() + " нету бана репутации.";
+        } else msg = "❌ " + fullName.get(0).getPush() + " отсутствует в этой беседе.";
 
-        User replySender = cache.getReplySenders().get(0);
-        UserChat replySenderUserChat = cache.getReplySendersUserChat().get(0);
-
-        if (replySenderUserChat == null) {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❌ " + replySender.getFullName().get(0).getPush() + " отсутствует в этой беседе.")
-                    .execute();
-            return;
-        }
-
-        if (replySenderUserChat.isBanrep()) {
-            chatRepository.updateBanReputation(replyMessage.getFromId(), peerId, false);
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("✅ Снял бан репутации " + replySender.getFullName().get(2).getPush() + ".").execute();
-        } else {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setDisableMentions(true)
-                    .setMessage("❗ У " + replySender.getFullName().get(1).getPush() + " нету бана репутации.")
-                    .execute();
-        }
+        vk.messages.send()
+                .setPeerId(peerId)
+                .setDisableMentions(true)
+                .setMessage(msg)
+                .execute();
     }
+
 }

@@ -2,19 +2,24 @@ package kz.ferius_057.ruminebot;
 
 import kz.ferius_057.ruminebot.data.Config;
 import kz.ferius_057.ruminebot.data.LocalData;
-import kz.ferius_057.ruminebot.database.ChatRepository;
 import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 import kz.ferius_057.ruminebot.database.Database;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.Set;
 
 public final class Main {
+
+    @Setter
+    @Getter
+    private static Manager manager;
 
     static {
         /* for logging */
@@ -22,15 +27,11 @@ public final class Main {
         System.setOut(IoBuilder.forLogger().setLevel(Level.INFO).buildPrintStream());
     }
 
-    public static void main(String[] args) throws IOException, SQLException, InterruptedException {
-        LocalData localData = new LocalData();
+    public static void main(String[] args) throws IOException, SQLException {
+        val localData = new LocalData();
+        localData.setTimeStartMs(System.currentTimeMillis()); // установка времени запуска
 
-        // установка времени запуска
-        localData.setTimeStartMs(System.currentTimeMillis());
-
-
-        Config config = Config.load(Paths.get("config.properties"));
-
+        val config = Config.load(Paths.get("config.properties"));
         if (config.getFileNameDataBase().isEmpty()) {
             System.err.println("Установите название файла базы данных.");
             return;
@@ -41,16 +42,13 @@ public final class Main {
             return;
         }
 
-        Database database = Database.create(config.getFileNameDataBase());
+        val database = Database.create(config.getFileNameDataBase());
 
-        ChatRepository chatRepository = new ChatRepositoryImpl(database);
-
-        Set<Integer> chats = chatRepository.getChats();
-        Set<Integer> users = chatRepository.getUsers();
-
-        Manager manager = new ManagerImpl(chatRepository, chats, users, null, localData);
-
-        LongPollHandler longPollHandler = new LongPollHandler(config.getToken(), manager);
+        val chatRepository = new ChatRepositoryImpl(database);
+        val longPollHandler = new LongPollHandler(
+                config.getToken(),
+                new ManagerImpl(chatRepository, chatRepository.getChats(), chatRepository.getUsers(), null, localData)
+        );
 
         // при завершении всё выключить
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -58,7 +56,9 @@ public final class Main {
             longPollHandler.stopPolling();
         }));
 
+
         try {
+            System.out.println("Запуск LongPoll...");
             // run
             longPollHandler.startPolling();
         } catch (Exception e) {

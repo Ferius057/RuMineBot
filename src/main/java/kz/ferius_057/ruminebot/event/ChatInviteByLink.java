@@ -2,28 +2,23 @@ package kz.ferius_057.ruminebot.event;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
+import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
+import kz.ferius_057.ruminebot.object.User;
+import lombok.val;
 
 /**
  * @author Charles_Grozny
  */
+@EventAnnotation(statuses = MessageActionStatus.CHAT_INVITE_USER_BY_LINK)
 public class ChatInviteByLink extends AbstractEvent {
-
-    public ChatInviteByLink(final Manager manager) {
-        super(manager, MessageActionStatus.CHAT_INVITE_USER_BY_LINK);
-    }
 
     @Override
     public void run(Message message, Message.Action action) throws VkApiException {
-        System.out.println(action);
-        if (action.getMemberId() >= 0) {
-            User user = User.get(manager, action.getMemberId());
-            System.out.println(user.getUserId());
-            System.out.println(user.getFirstName()[0]);
-            chatRepository.addUserInPeerId(action.getMemberId(), message.getPeerId(), user.getFirstName()[0].toString(), 0);
-        }
+        if (action.getMemberId() < 0) return;
+
+        val memberId = action.getMemberId();
+        chatRepository.addUserInPeerId(memberId, message.getPeerId(), User.get(manager, memberId).getFirstName()[0].toString(), 0);
     }
 }

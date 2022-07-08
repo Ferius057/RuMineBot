@@ -1,36 +1,38 @@
 package kz.ferius_057.ruminebot.command.role;
 
-import kz.ferius_057.ruminebot.Manager;
-import api.longpoll.bots.model.objects.basic.Message;
 import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.object.User;
+import lombok.val;
 
 import java.util.List;
 
 /**
  * @author Charles_Grozny
  */
+@CommandAnnotation(aliases = { "admins", "админы", "staff", "staffs" })
 public class Admins extends AbstractCommand {
-
-    public Admins(Manager Manager) {
-        super(Manager, "admins", "админы", "staff", "staffs");
-    }
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
-        List<UserChat> admins = chatRepository.getAdminsFromChat(message.getPeerId());
-        StringBuilder sb = new StringBuilder("✅ Список администраторов:\n");
+        val admins = chatRepository.getAdminsFromChat(message.getPeerId());
+
+        val sb = new StringBuilder("✅ Список администраторов:\n");
         for (int i = 0; i < admins.size(); i++) {
-            User user = User.get(manager, admins.get(i).getUserId());
-            sb.append(i + 1).append(". ")
-                    .append(user.getFullName().get(0).getPush())
+            sb.append(i + 1)
+                    .append(". ")
+                    .append(User.get(manager, admins.get(i).getUserId()).getFullName().get(0).getPush())
                     .append(".\n");
         }
-        vk.messages.send().setPeerId(message.getPeerId()).setDisableMentions(true)
-                .setMessage(sb.toString()).execute();
+
+        vk.messages.send()
+                .setPeerId(message.getPeerId())
+                .setDisableMentions(true)
+                .setMessage(sb.toString())
+                .execute();
     }
 
     @Override

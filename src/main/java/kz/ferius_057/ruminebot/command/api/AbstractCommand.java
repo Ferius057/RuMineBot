@@ -3,11 +3,10 @@ package kz.ferius_057.ruminebot.command.api;
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.methods.VkBotsMethods;
 import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.Main;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepository;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -17,24 +16,19 @@ import java.util.List;
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PROTECTED)
 public abstract class AbstractCommand implements Command {
-    String name;
-    String[] aliases;
 
     Manager manager;
 
-    ChatRepository chatRepository;
     VkBotsMethods vk;
     LocalData localData;
+    ChatRepository chatRepository;
 
-    protected AbstractCommand(final Manager manager, final String name, final String... aliases) {
-        this.name = name;
-        this.aliases = aliases;
+    protected AbstractCommand() {
+        this.manager = Main.getManager();
 
-        this.manager = manager;
-
-        this.chatRepository = manager.chatRepository();
         this.vk = manager.vk();
         this.localData = manager.localData();
+        this.chatRepository = manager.chatRepository();
     }
 
     @Override
@@ -43,11 +37,4 @@ public abstract class AbstractCommand implements Command {
     @Override
     public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {}
 
-
-    protected final List<Message> getForeignMessage(final Message message, final int amount) {
-        List<Message> messages = message.getFwdMessages();
-        messages.add(0, message.getReplyMessage());
-
-        return messages.subList(0, amount);
-    }
 }

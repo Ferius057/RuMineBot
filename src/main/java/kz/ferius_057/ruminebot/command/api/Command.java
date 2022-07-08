@@ -2,14 +2,10 @@ package kz.ferius_057.ruminebot.command.api;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 
 import java.util.List;
 
 public interface Command {
-    String getName();
-    String[] getAliases();
 
     void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException;
 

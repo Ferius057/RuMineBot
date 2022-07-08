@@ -1,6 +1,7 @@
 package kz.ferius_057.ruminebot.event.api;
 
 import api.longpoll.bots.methods.VkBotsMethods;
+import kz.ferius_057.ruminebot.Main;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.database.ChatRepository;
 import lombok.AccessLevel;
@@ -14,12 +15,11 @@ public abstract class AbstractEvent implements Event {
     Manager manager;
 
     VkBotsMethods vk;
-    MessageActionStatus eventName;
     ChatRepository chatRepository;
 
-    protected AbstractEvent(final Manager manager, final MessageActionStatus eventName) {
-        this.manager = manager;
-        this.eventName = eventName;
+    protected AbstractEvent() {
+        this.manager = Main.getManager();
+
         this.vk = manager.vk();
         this.chatRepository = manager.chatRepository();
     }

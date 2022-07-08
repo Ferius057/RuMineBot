@@ -1,7 +1,6 @@
 package kz.ferius_057.ruminebot.command.api;
 
 import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.object.UserChat;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,9 +19,11 @@ import java.util.List;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CacheDataMessage {
+
     User sender;
     UserChat senderUserChat;
 
     List<User> replySenders = new ArrayList<>();
     List<UserChat> replySendersUserChat = new ArrayList<>();
+
 }
