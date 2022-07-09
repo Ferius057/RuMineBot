@@ -1,5 +1,7 @@
 package kz.ferius_057.ruminebot.database;
 
+import lombok.val;
+
 import java.sql.*;
 
 public final class Database {
@@ -24,7 +26,7 @@ public final class Database {
     }
 
     public void executeUpdate(final String query, final Object... parameters) {
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (val statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
             statement.executeUpdate();
@@ -43,10 +45,10 @@ public final class Database {
         }
     }
     public <T> T executeQuery(final ThrowableFunction<ResultSet, T, SQLException> reader, final String query, final Object... parameters) {
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (val statement = connection.prepareStatement(query)) {
             fillStatement(statement, parameters);
 
-            try (ResultSet rs = statement.executeQuery()) {
+            try (val rs = statement.executeQuery()) {
                 return reader.apply(rs);
             }
         } catch (SQLException e) {

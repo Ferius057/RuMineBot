@@ -3,12 +3,11 @@ package kz.ferius_057.ruminebot.object;
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.additional.NameCase;
 import kz.ferius_057.ruminebot.Manager;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,11 +20,9 @@ import java.util.List;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class User {
     int userId;
-    Object[] firstName;
-    Object[] lastName;
+    Object[] firstName, lastName;
     List<FullName> fullName = new ArrayList<>();
-    String github;
-    String nicknameMinecraft;
+    String github, nicknameMinecraft;
     long date;
 
     public User(int userId, Object[] firstName, Object[] lastName, String github, String nicknameMinecraft, long date) {
@@ -37,7 +34,7 @@ public class User {
         this.date = date;
 
         for (int i = 0; i < this.firstName.length; i++) {
-            FullName fullName = new FullName();
+            val fullName = new FullName();
             fullName.setNoPush(this.firstName[i] + " " + this.lastName[i]);
             fullName.setPush("[id" + userId + "|" + this.firstName[i] + " " + this.lastName[i] + "]");
             this.fullName.add(fullName);
@@ -45,13 +42,13 @@ public class User {
     }
 
     public static User get(final Manager manager, final int userId) throws VkApiException {
-        User user = manager.localData().users.get(userId);
+        val user = manager.localData().users.get(userId);
 
         if (user == null) {
-            User userNew = manager.chatRepository().getUser(userId);
+            val userNew = manager.chatRepository().getUser(userId);
 
             if (userNew == null) {
-                User.registrationUser(manager, String.valueOf(userId));
+                User.registrationUser(manager, Collections.singletonList(String.valueOf(userId)));
                 get(manager, userId);
             }
 
@@ -60,7 +57,8 @@ public class User {
         } else return user;
     }
 
-    public static void registrationUser(final Manager manager, final String... userId) throws VkApiException {
+    @SneakyThrows
+    public static void registrationUser(final Manager manager, final List<String> userId) {
 
         // TODO: 27.06.2022 | сделать по нормальному
 

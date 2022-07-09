@@ -30,7 +30,6 @@ public class ChatRepositoryImpl implements ChatRepository {
         database.executeUpdate("CREATE TABLE IF NOT EXISTS users (" +
                 "userId INTEGER," +
                 "peerId INTEGER," +
-                "nickname TEXT," +
                 "role INTEGER," +
                 "reputation INTEGER," +
                 "exist BOOLEAN," +
@@ -80,15 +79,15 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public void addUserInPeerId(int userId, int peerId, String nickname, int role) {
-        database.executeUpdate("INSERT INTO users (userId, peerId, nickname, role, reputation, exist, banrep)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)", userId, peerId, nickname, role, 0, true, false);
+    public void addUserInPeerId(int userId, int peerId, int role) {
+        database.executeUpdate("INSERT INTO users (userId, peerId, role, reputation, exist, banrep)" +
+                "VALUES (?, ?, ?, ?, ?, ?)", userId, peerId, role, 0, true, false);
     }
 
     @Override
-    public void updateUser(int userId, int peerId, String nickname, int role, int exist) {
-        database.executeUpdate("UPDATE users SET nickname=(?), role=(?), exist=(?) " +
-                "WHERE userId=(?) and peerId=(?)", nickname, role, exist, userId, peerId);
+    public void updateUser(int userId, int peerId, int role, boolean exist) {
+        database.executeUpdate("UPDATE users SET role=(?), exist=(?) " +
+                "WHERE userId=(?) and peerId=(?)", role, exist, userId, peerId);
     }
 
     @Override
@@ -126,11 +125,10 @@ public class ChatRepositoryImpl implements ChatRepository {
                                 new UserChat(
                                         rs.getInt(1),
                                         rs.getInt(2),
-                                        rs.getString(3),
+                                        rs.getInt(3),
                                         rs.getInt(4),
-                                        rs.getInt(5),
-                                        rs.getBoolean(6),
-                                        rs.getBoolean(7))
+                                        rs.getBoolean(5),
+                                        rs.getBoolean(6))
                         );
                     }
 
@@ -151,11 +149,10 @@ public class ChatRepositoryImpl implements ChatRepository {
                                 new UserChat(
                                         rs.getInt(1),
                                         rs.getInt(2),
-                                        rs.getString(3),
+                                        rs.getInt(3),
                                         rs.getInt(4),
-                                        rs.getInt(5),
-                                        rs.getBoolean(6),
-                                        rs.getBoolean(7)
+                                        rs.getBoolean(5),
+                                        rs.getBoolean(6)
                                 )
                         );
                     }
@@ -176,11 +173,10 @@ public class ChatRepositoryImpl implements ChatRepository {
                         userInPeerId = new UserChat(
                                 rs.getInt(1),
                                 rs.getInt(2),
-                                rs.getString(3),
+                                rs.getInt(3),
                                 rs.getInt(4),
-                                rs.getInt(5),
-                                rs.getBoolean(6),
-                                rs.getBoolean(7)
+                                rs.getBoolean(5),
+                                rs.getBoolean(6)
                         );
                     }
 

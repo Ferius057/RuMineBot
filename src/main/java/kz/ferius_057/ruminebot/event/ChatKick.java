@@ -16,12 +16,11 @@ public class ChatKick extends AbstractEvent {
 
     @Override
     public void run(Message message, Message.Action action) throws VkApiException {
-        System.out.println("123");
         val memberId = action.getMemberId();
         val peerId = message.getPeerId();
 
         if (chatRepository.getUserFromChat(memberId, peerId) == null)
-            chatRepository.addUserInPeerId(memberId, peerId, User.get(manager, memberId).getFirstName()[0].toString(),0);
+            chatRepository.addUserInPeerId(memberId, peerId, 0);
 
         chatRepository.updateExist(message.getFromId(), peerId,false);
     }

@@ -21,18 +21,18 @@ public class ReputationAdd extends AbstractCommand {
         val replySenderUser = cache.getReplySenders().get(0);
         val replySenderUserChat = cache.getReplySendersUserChat().get(0);
 
-        val push = replySenderUser.getFullName().get(0).getPush();
-        val reputation = replySenderUserChat.getReputation();
-
         String msg;
-        if(replySenderUserChat.isExist()) {
-            if(replySenderUserChat.getUserId() != cache.getSenderUserChat().getUserId()) {
+        if (replySenderUserChat != null && replySenderUserChat.isExist()) {
+            if (replySenderUserChat.getUserId() != cache.getSenderUserChat().getUserId()) {
                 if (!cache.getSenderUserChat().isBanrep()) {
+                    val push = replySenderUser.getFullName().get(0).getPush();
                     if (!replySenderUserChat.isBanrep()) {
+                        val reputation = replySenderUserChat.getReputation();
+
                         chatRepository.setReputation(replyMessages.get(0).getFromId(), peerId, reputation + 1);
                         msg = "⚡ " + push + " получил +1 к репутации." + "\n⋞ " + reputation + " ⋟  ➤  ⋞ " + (reputation + 1) + " ⋟";
                     } else msg = "❗ " + push + " не может получать репутацию, так как у него бан репутации.";
-                } else msg = "❗ [id" + message.getFromId() + "|" + cache.getSenderUserChat().getNickname() + "], вы не можете выдавать репутацию, так как у вас бан репутации.";
+                } else msg = "❗ [id" + message.getFromId() + "|" + cache.getSender().getFirstName()[0] + "], вы не можете выдавать репутацию, так как у вас бан репутации.";
             } else msg = "❌ Выдавать репутацию самому себе запрещено.";
         } else msg = "❌ " + replySenderUser.getFullName().get(0).getPush() + " отсутствует в этой беседе.";
 

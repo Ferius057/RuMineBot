@@ -16,10 +16,10 @@ public interface ChatRepository {
 
 
     // Добавляет пользователя в беседу | USERS
-    void addUserInPeerId(final int userId, final int peerId, final String nickname, final int role);
+    void addUserInPeerId(final int userId, final int peerId, final int role);
 
     // Обновляет данные пользователя в беседе | USERS
-    void updateUser(final int userId, final int peerId, final String nickname, final int role, final int exist);
+    void updateUser(final int userId, final int peerId, final int role, final boolean exist);
 
     // Обновляет данные пользователя есть ли он в беседе или нет | USERS
     void updateExist(final int userId, final int peerId, final boolean exist);

@@ -6,8 +6,6 @@ import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
 import lombok.val;
 
 import java.util.List;

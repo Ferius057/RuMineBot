@@ -31,7 +31,7 @@ public final class SimpleCommandManager implements CommandManager {
     @SneakyThrows
     public static CommandManager create(final Manager manager) {
         val commandManager = new SimpleCommandManager(manager, new HashMap<>());
-        List<Class<?>> classesInPackage = AccessingAllClassesInPackage.getClassesCommand("kz.ferius_057.ruminebot.command");
+        val classesInPackage = AccessingAllClassesInPackage.getClassesCommand("kz.ferius_057.ruminebot.command");
         for (val clazz : classesInPackage)
             commandManager.register((Command) clazz.getConstructor().newInstance());
 
@@ -42,7 +42,7 @@ public final class SimpleCommandManager implements CommandManager {
 
     @Override
     public boolean run(final Message message) {
-        String text = message.getText();
+        val text = message.getText();
 
         Command command;
         String[] params, args;
@@ -61,7 +61,7 @@ public final class SimpleCommandManager implements CommandManager {
         if (command == null) return true;
 
         try {
-            List<Message> messages = replyMessage(message);
+            val messages = replyMessage(message);
 
             cacheDataMessage.getReplySenders().clear();
             cacheDataMessage.getReplySendersUserChat().clear();
@@ -75,10 +75,10 @@ public final class SimpleCommandManager implements CommandManager {
             if (messages.size() == 0)
                 command.run(cacheDataMessage, message, args);
             else {
-                List<User> users = cacheDataMessage.getReplySenders();
-                List<UserChat> userChats = cacheDataMessage.getReplySendersUserChat();
+                val users = cacheDataMessage.getReplySenders();
+                val userChats = cacheDataMessage.getReplySendersUserChat();
 
-                for (Message reply : messages) {
+                for (val reply : messages) {
                     users.add(User.get(manager, reply.getFromId()));
                     userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
                 }

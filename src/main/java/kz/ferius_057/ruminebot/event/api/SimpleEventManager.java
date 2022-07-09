@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.val;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public final class SimpleEventManager implements EventManager {
     @SneakyThrows
     public static EventManager create() {
         val commandManager = new SimpleEventManager(new HashMap<>());
-        List<Class<?>> classesInPackage = AccessingAllClassesInPackage.getClassesEvent("kz.ferius_057.ruminebot.event");
+        val classesInPackage = AccessingAllClassesInPackage.getClassesEvent("kz.ferius_057.ruminebot.event");
         for (val clazz : classesInPackage)
             commandManager.register((Event) clazz.getConstructor().newInstance());
 
@@ -33,7 +32,7 @@ public final class SimpleEventManager implements EventManager {
 
     @Override
     public boolean run(final Message message, final Message.Action action) {
-        Event event = eventMap.get(action.getType());
+        val event = eventMap.get(action.getType());
         if (event == null) return false;
 
         try {

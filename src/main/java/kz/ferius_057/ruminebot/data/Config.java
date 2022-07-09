@@ -3,10 +3,9 @@ package kz.ferius_057.ruminebot.data;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -25,10 +24,10 @@ public final class Config {
     }
 
     public static Config load(final Path path) throws IOException {
-        Properties properties = new Properties();
+        val properties = new Properties();
 
         if (Files.exists(path)) {
-            try (final InputStream input = Files.newInputStream(path)) {
+            try (val input = Files.newInputStream(path)) {
                 properties.load(input);
             }
         } else {
@@ -36,7 +35,7 @@ public final class Config {
             properties.setProperty("token", "");
             properties.setProperty("fileNameDataBase", "");
 
-            try (OutputStream os = Files.newOutputStream(path)) {
+            try (val os = Files.newOutputStream(path)) {
                 properties.store(os, "Config Data");
             }
         }

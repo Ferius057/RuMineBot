@@ -13,13 +13,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class UserChat implements Comparable<UserChat> {
-    int userId;
-    int peerId;
-    String nickname;
-    int role;
-    int reputation;
-    boolean exist;
-    boolean banrep;
+    int userId, peerId, role, reputation;
+    boolean exist, banrep;
 
     @Override
     public int compareTo(UserChat userChat) {

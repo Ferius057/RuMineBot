@@ -7,6 +7,7 @@ import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
+import lombok.val;
 
 import java.util.List;
 
@@ -36,11 +37,10 @@ public class Profile extends AbstractCommand {
             return;
         }
 
-        String text = "\n\uD83D\uDC8E Информация о пользователе " + user.getFullName().get(0).getPush() + ":" +
+        val text = "\n\uD83D\uDC8E Информация о пользователе " + user.getFullName().get(0).getPush() + ":" +
                 "\n\uD83C\uDD94 ID Профиля VK: " + user.getUserId() +
 
-                "\n\n\uD83D\uDDFD Ник в беседе: " + userChat.getNickname() +
-                "\n\uD83D\uDC51 Роль: " + (userChat.getRole() == 0 ? "Участник" : "Админ") +
+                "\n\n\uD83D\uDC51 Роль: " + (userChat.getRole() == 0 ? "Участник" : "Админ") +
                 "\n✳ Репутации: " + userChat.getReputation() +
                 "\n⭕ Бан Репутации: " + (userChat.isBanrep() ? "Есть" : "Нету") +
 

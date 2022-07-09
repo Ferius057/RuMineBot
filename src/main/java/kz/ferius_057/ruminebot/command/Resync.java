@@ -10,66 +10,35 @@ import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.util.AutoUpdateUser;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Charles_Grozny
  */
 @Permission(value = 1)
-@CommandAnnotation(aliases = { "resync", "обновить", "update" })
+@CommandAnnotation(aliases = {"resync", "обновить", "update"})
 public class Resync extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        ExtendedVkList<GetConversationMembers.Response.Item> response;
-
-        response = vk.messages.getConversationMembers()
-                .setPeerId(peerId)
-                .setFields("first_name_nom")
-                .execute().getResponseObject();
-
-        long start = System.currentTimeMillis();
-
-        ArrayList<String> users = new ArrayList<>();
-        List<Integer> admins = new ArrayList<>();
-
-        response.getItems().forEach(s -> {
-            if (s.getAdmin() != null) admins.add(s.getMemberId());
-        });
-
-        response.getProfiles().forEach(s -> {
-            users.add(s.getId().toString());
-            UserChat userChat = chatRepository.getUserFromChat(s.getId(), peerId);
-            if (admins.contains(s.getId())) {
-                if (userChat == null)
-                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 1);
-                else chatRepository.updateUser(s.getId(), peerId, userChat.getNickname(), 1, 1);
-            } else {
-                if (userChat == null)
-                    chatRepository.addUserInPeerId(s.getId(), peerId, s.getFirstName(), 0);
-                else chatRepository.updateUser(s.getId(), peerId, userChat.getNickname(), 0, 1);
-            }
-        });
-
-        for (int i = 0; i < users.size(); i++) {
-            if (!manager.getUsers().add(Integer.valueOf(users.get(i)))) {
-                users.remove(users.get(i));
-                i--;
-            }
-        }
-
-        //CompletableFuture.runAsync(() -> {
-        if (users.size() > 0) User.registrationUser(manager, users.toArray(new String[0]));
-        //});
+        val response = AutoUpdateUser.updateChatUsers(peerId, chatRepository, vk);
 
         vk.messages.send()
                 .setPeerId(peerId)
-                .setMessage("Данные беседы были обновлены.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.")
+                .setMessage("Данные беседы были обновлены.")
                 .execute();
+
+        User.registrationUser(manager, response.getProfiles().stream()
+                .map(api.longpoll.bots.model.objects.basic.User::getId)
+                .map(Object::toString).collect(Collectors.toUnmodifiableList()));
     }
 
     @Override

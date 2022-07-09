@@ -8,65 +8,49 @@ import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.object.User;
+import lombok.SneakyThrows;
 import lombok.val;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-@CommandAnnotation(aliases = { "reg", "register" })
+@CommandAnnotation(aliases = {"reg", "register"})
 public final class Register extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
         int peerId = message.getPeerId();
 
-        if (manager.getPeerIds().add(peerId)) {
-            long start = System.currentTimeMillis();
-
-            ExtendedVkList<GetConversationMembers.Response.Item> response;
-
-            response = vk.messages.getConversationMembers()
-                    .setPeerId(peerId)
-                    .setFields("first_name_nom")
-                    .execute().getResponseObject();
-
-            ArrayList<String> users = new ArrayList<>(), admins = new ArrayList<>();
+        String msg;
+        if (!manager.getPeerIds().contains(peerId)) {
+            ExtendedVkList<GetConversationMembers.Response.Item> response = vk.messages.getConversationMembers()
+                    .setPeerId(peerId).execute().getResponseObject();
 
             response.getItems()
                     .stream()
-                    .filter(item -> item.getAdmin() != null)
-                    .forEach(item -> admins.add(item.getMemberId().toString()));
-
-            response.getProfiles().forEach(profile -> {
-                val id = profile.getId();
-                users.add(id.toString());
-
-                chatRepository.addUserInPeerId(id, peerId, profile.getFirstName(), admins.contains(id.toString()) ? 1 : 0);
-            });
-
-            for (int i = 0; i < users.size(); i++) {
-                if (!manager.getUsers().add(Integer.valueOf(users.get(i)))) {
-                    users.remove(users.get(i));
-                    i--;
-                }
-            }
-
-            //CompletableFuture.runAsync(() -> {
-            if (users.size() > 0) User.registrationUser(manager, users.toArray(new String[0]));
-            //});
+                    .filter(item -> item.getMemberId() > 0)
+                    .forEach(item -> chatRepository.addUserInPeerId(item.getMemberId(),
+                            peerId, item.getAdmin() == null ? 0 : 1));
 
             chatRepository.createChat(peerId);
+            manager.getPeerIds().add(peerId);
 
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setMessage("Ваша беседа успешно зарегистрирована.\nОбработал команду за " + (System.currentTimeMillis() - start) + "ms.")
-                    .execute();
+            User.registrationUser(manager, response.getProfiles().stream()
+                    .map(api.longpoll.bots.model.objects.basic.User::getId)
+                    .map(Object::toString).collect(Collectors.toUnmodifiableList()));
+
+            msg = "Ваша беседа успешно зарегистрирована.";
         } else {
-            vk.messages.send()
-                    .setPeerId(peerId)
-                    .setMessage("Ваша беседа уже зарегистрирована!")
-                    .execute();
+            msg = "Ваша беседа уже зарегистрирована!";
         }
+
+        vk.messages.send()
+                .setPeerId(peerId)
+                .setMessage(msg)
+                .execute();
     }
 
     @Override

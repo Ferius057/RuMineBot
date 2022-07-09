@@ -19,6 +19,6 @@ public class ChatInviteByLink extends AbstractEvent {
         if (action.getMemberId() < 0) return;
 
         val memberId = action.getMemberId();
-        chatRepository.addUserInPeerId(memberId, message.getPeerId(), User.get(manager, memberId).getFirstName()[0].toString(), 0);
+        chatRepository.addUserInPeerId(memberId, message.getPeerId(), 0);
     }
 }

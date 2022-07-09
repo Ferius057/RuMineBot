@@ -24,7 +24,7 @@ public class ChatInvite extends AbstractEvent {
         if (chatRepository.getUserFromChat(memberId, peerId) != null)
             chatRepository.updateExist(message.getFromId(), peerId, true);
         else
-            chatRepository.addUserInPeerId(memberId, peerId, User.get(manager, memberId).getFirstName()[0].toString(), 0);
+            chatRepository.addUserInPeerId(memberId, peerId, 0);
     }
 
 }
