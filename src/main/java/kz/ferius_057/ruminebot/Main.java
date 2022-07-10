@@ -16,8 +16,7 @@ import org.apache.logging.log4j.io.IoBuilder;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 import static com.google.common.math.LongMath.factorial;
 
@@ -64,7 +63,11 @@ public final class Main {
         }));
 
         // для обновления юзеров в чате
-        CompletableFuture.supplyAsync(() -> AutoUpdateUser.updateChatUsers(2000000001, chatRepository, manager.vk()));
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleWithFixedDelay(() -> {
+            System.out.println("update users in 2000000001 chat");
+            AutoUpdateUser.updateChatUsers(2000000001, chatRepository, manager.vk());
+        }, 1, 1, TimeUnit.HOURS);
 
 
         System.out.println("Запуск LongPoll...");
