@@ -56,19 +56,18 @@ public final class Main {
                 new ManagerImpl(chatRepository, chatRepository.getChats(), chatRepository.getUsers(), null, localData)
         );
 
-        // при завершении всё выключить
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            database.close();
-            longPollHandler.stopPolling();
-        }));
-
         // для обновления юзеров в чате
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleWithFixedDelay(() -> {
+        val scheduledFuture = Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(() -> {
             System.out.println("update users in 2000000001 chat");
             AutoUpdateUser.updateChatUsers(2000000001, chatRepository, manager.vk());
         }, 1, 1, TimeUnit.HOURS);
 
+        // при завершении всё выключить
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            database.close();
+            longPollHandler.stopPolling();
+            scheduledFuture.cancel(true);
+        }));
 
         System.out.println("Запуск LongPoll...");
         // run

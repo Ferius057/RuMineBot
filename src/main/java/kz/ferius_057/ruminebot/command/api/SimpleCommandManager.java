@@ -79,8 +79,19 @@ public final class SimpleCommandManager implements CommandManager {
                 val userChats = cacheDataMessage.getReplySendersUserChat();
 
                 for (val reply : messages) {
-                    users.add(User.get(manager, reply.getFromId()));
-                    userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
+                    if (reply.getFromId() > 0) {
+                        users.add(User.get(manager, reply.getFromId()));
+                        userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
+                    }
+                }
+
+                if (users.size() <= 0) {
+                    manager.vk().messages.send()
+                            .setPeerId(message.getPeerId())
+                            .setDisableMentions(true)
+                            .setMessage("❌ Данная команда работает только на пользователей.")
+                            .execute();
+                    return true;
                 }
 
                 cacheDataMessage.setReplySenders(users);
