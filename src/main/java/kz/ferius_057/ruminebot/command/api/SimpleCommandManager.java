@@ -4,6 +4,7 @@ import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
@@ -71,6 +72,8 @@ public final class SimpleCommandManager implements CommandManager {
 
             if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId()))
                 return true;
+            if (!checkSyntax(command, message.getPeerId(), args))
+                return true;
 
             if (messages.size() == 0)
                 command.run(cacheDataMessage, message, args);
@@ -128,6 +131,17 @@ public final class SimpleCommandManager implements CommandManager {
                 .setPeerId(peerId)
                 .setDisableMentions(true)
                 .setMessage("❗ [id" + user.getUserId() + "|" + cacheDataMessage.getSender().getFirstName()[0] + "], у вас недостаточно прав для данной команды.")
+                .execute();
+        return false;
+    }
+
+    private boolean checkSyntax(Command command, int peerId, String... args) throws VkApiException {
+        val declaredAnnotation = command.getClass().getDeclaredAnnotation(MinimalArgs.class);
+        if (declaredAnnotation == null || declaredAnnotation.value() <= args.length) return true;
+
+        manager.vk().messages.send()
+                .setPeerId(peerId)
+                .setMessage(declaredAnnotation.message())
                 .execute();
         return false;
     }

@@ -5,6 +5,7 @@ import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
 import lombok.val;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 
 @Permission(value = 1)
+@MinimalArgs(value = 1, message = "!repset {кол-во репутации}")
 @CommandAnnotation(aliases = { "reputationset", "repset", "репсет", "setrep", "сетреп" })
 public class ReputationSet extends AbstractCommand {
 

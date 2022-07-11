@@ -22,7 +22,7 @@ public class LocalData {
 
     Gson gson = new Gson();
 
-    HashMap<Integer, User> users = new HashMap<>(); // TODO: 04.07.2022 | сделать что бы обновлялось
+    HashMap<Integer, User> users = new HashMap<>();
 
     @Setter
     @NonFinal

@@ -5,6 +5,7 @@ import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import lombok.val;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 /**
  * @author Charles_Grozny
  */
+@MinimalArgs(value = 1, message = "!nick {твой ник}")
 @CommandAnnotation(aliases = { "minenick", "minenickname", "minecraftnickname", "майнник", "ник", "никнейм", "nick", "nickname" })
 public class AddNickNameMinecraft extends AbstractCommand {
 

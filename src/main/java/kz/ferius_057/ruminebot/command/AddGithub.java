@@ -6,20 +6,20 @@ import com.google.gson.JsonObject;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
-import lombok.SneakyThrows;
+import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import lombok.val;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 /**
  * @author Charles_Grozny
  */
+@MinimalArgs(value = 1, message = "!github {ссылка на github аккаунт}")
 @CommandAnnotation(aliases = { "github", "гитхаб" })
 public class AddGithub extends AbstractCommand {
 
