@@ -85,7 +85,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public void updateUser(int userId, int peerId, int role, boolean exist) {
+    public void updateUserChat(int userId, int peerId, int role, boolean exist) {
         database.executeUpdate("UPDATE users SET role=(?), exist=(?) " +
                 "WHERE userId=(?) and peerId=(?)", role, exist, userId, peerId);
     }
@@ -191,6 +191,12 @@ public class ChatRepositoryImpl implements ChatRepository {
     public void registerUserInBot(int userId, final String[] firstName, final String[] lastName) {
         database.executeUpdate("INSERT INTO usersData (userId, firstName, lastName, github, nicknameMinecraft, date)" +
                 "VALUES (?, ?, ?, ?, ?, ?)", userId, firstName, lastName, "false", "false", System.currentTimeMillis());
+    }
+
+    @Override
+    public void updateUser(int userId, Object[] firstName, Object[] lastName, String github, String nicknameMinecraft) {
+        database.executeUpdate("UPDATE usersData SET firstName=(?), lastName=(?), github=(?), nicknameMinecraft=(?) " +
+                "WHERE userId=(?) ", firstName, lastName, github, nicknameMinecraft, userId);
     }
 
     @Override

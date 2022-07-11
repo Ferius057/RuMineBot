@@ -19,7 +19,7 @@ public interface ChatRepository {
     void addUserInPeerId(final int userId, final int peerId, final int role);
 
     // Обновляет данные пользователя в беседе | USERS
-    void updateUser(final int userId, final int peerId, final int role, final boolean exist);
+    void updateUserChat(final int userId, final int peerId, final int role, final boolean exist);
 
     // Обновляет данные пользователя есть ли он в беседе или нет | USERS
     void updateExist(final int userId, final int peerId, final boolean exist);
@@ -45,6 +45,9 @@ public interface ChatRepository {
 
     // Добавляет пользователя в базу бота | USERSDATA
     void registerUserInBot(final int userId, final String[] firstName, final String[] lastName);
+
+    // Обновляет данные пользователя в боте | USERSDATA
+    void updateUser(final int userId, final Object[] firstName, final Object[] lastName, final String github, final String nicknameMinecraft);
 
     // Получает пользователя из базы бота | USERSDATA
     User getUser(final int userId);

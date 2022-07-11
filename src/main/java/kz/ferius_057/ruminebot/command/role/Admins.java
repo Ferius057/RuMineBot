@@ -25,7 +25,7 @@ public class Admins extends AbstractCommand {
             sb.append(i + 1)
                     .append(". ")
                     .append(User.get(manager, admins.get(i).getUserId()).getFullName().get(0).getPush())
-                    .append(".\n");
+                    .append("\n");
         }
 
         vk.messages.send()
