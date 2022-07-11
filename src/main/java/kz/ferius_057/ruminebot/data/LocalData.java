@@ -1,5 +1,6 @@
 package kz.ferius_057.ruminebot.data;
 
+import com.google.gson.Gson;
 import kz.ferius_057.ruminebot.object.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,6 +19,8 @@ import java.util.TimeZone;
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PUBLIC)
 public class LocalData {
+
+    Gson gson = new Gson();
 
     HashMap<Integer, User> users = new HashMap<>(); // TODO: 04.07.2022 | сделать что бы обновлялось
 

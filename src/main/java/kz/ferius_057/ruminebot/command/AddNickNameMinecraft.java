@@ -18,7 +18,6 @@ public class AddNickNameMinecraft extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
-
         val nickName = args[0];
         val user = cache.getSender();
         val name = "[id" + message.getFromId() + "|" + cache.getSender().getFirstName()[0] + "],";
@@ -30,7 +29,7 @@ public class AddNickNameMinecraft extends AbstractCommand {
                 chatRepository.updateUser(user.getUserId(),
                         user.getFirstName(), user.getLastName(),
                         user.getGithub(), nickName);
-                localData.users.get(user.getUserId());
+                localData.users.remove(user.getUserId());
 
                 msg = "✅ " + name + " Вы установили себе ник в Minecraft: " + nickName;
 
@@ -39,6 +38,7 @@ public class AddNickNameMinecraft extends AbstractCommand {
 
         vk.messages.send()
                 .setPeerId(message.getPeerId())
+                .setDisableMentions(true)
                 .setMessage(msg)
                 .execute();
     }

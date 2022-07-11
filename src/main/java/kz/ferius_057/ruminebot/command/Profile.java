@@ -50,6 +50,7 @@ public class Profile extends AbstractCommand {
         vk.messages.send()
                 .setPeerId(peerId)
                 .setDisableMentions(true)
+                .setDontParseLinks(true)
                 .setMessage(text)
                 .execute();
     }
