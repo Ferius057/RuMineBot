@@ -27,11 +27,14 @@ public class BanRepList extends AbstractCommand {
                 .filter(UserChat::isBanrep)
                 .collect(Collectors.toList());
 
-        val msg = new StringBuilder("⭕ Пользователи имеющие бан репутации:\n");
-        for (int i = 0; i < list.size(); i++) {
-            msg.append(User.get(manager, list.get(i).getUserId()).getFullName().get(0).getPush())
-                    .append(i != (list.size()-1) ? ", " : "");
-        }
+        val msg = new StringBuilder();
+        if (list.size() != 0) {
+            msg.append("⭕ Пользователи имеющие бан репутации:\n");
+            for (int i = 0; i < list.size(); i++) {
+                msg.append(User.get(manager, list.get(i).getUserId()).getFullName().get(0).getPush())
+                        .append(i != (list.size() - 1) ? ", " : "");
+            }
+        } else msg.append("⭕ В беседе никто не имеет бан репутации.");
 
         vk.messages.send()
                 .setPeerId(message.getPeerId())
