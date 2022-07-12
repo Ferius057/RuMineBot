@@ -6,6 +6,7 @@ import kz.ferius_057.ruminebot.Manager;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
+import kz.ferius_057.ruminebot.command.api.annotation.ExceptRegistered;
 import kz.ferius_057.ruminebot.object.User;
 import kz.ferius_057.ruminebot.object.UserChat;
 import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
@@ -70,10 +71,14 @@ public final class SimpleCommandManager implements CommandManager {
             cacheDataMessage.setSender(User.get(manager, message.getFromId()));
             cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
 
-            if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId()))
+            if (!checkRegisterChatForCommand(command, message.getPeerId()))
                 return true;
-            if (!checkSyntax(command, message.getPeerId(), args))
+            if (!checkSyntax(command, message.getPeerId(), args)) {
                 return true;
+            }
+            if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId())) {
+                return true;
+            }
 
             if (messages.size() == 0)
                 command.run(cacheDataMessage, message, args);
@@ -142,6 +147,18 @@ public final class SimpleCommandManager implements CommandManager {
         manager.vk().messages.send()
                 .setPeerId(peerId)
                 .setMessage(declaredAnnotation.message())
+                .execute();
+        return false;
+    }
+
+    private boolean checkRegisterChatForCommand(Command command, int peerId) throws VkApiException {
+        val declaredAnnotation = command.getClass().getDeclaredAnnotation(ExceptRegistered.class);
+        if (declaredAnnotation != null || manager.getPeerIds().contains(peerId)) return true;
+
+        manager.vk().messages.send()
+                .setPeerId(peerId)
+                .setDisableMentions(true)
+                .setMessage("❌ Для использования этой команды нужно зарегистрировать чат командой <<!reg>>.")
                 .execute();
         return false;
     }

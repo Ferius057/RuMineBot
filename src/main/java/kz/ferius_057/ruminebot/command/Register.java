@@ -7,16 +7,14 @@ import api.longpoll.bots.model.response.ExtendedVkList;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
+import kz.ferius_057.ruminebot.command.api.annotation.ExceptRegistered;
 import kz.ferius_057.ruminebot.object.User;
-import lombok.SneakyThrows;
-import lombok.val;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+
+@ExceptRegistered()
 @CommandAnnotation(aliases = {"reg", "register"})
 public final class Register extends AbstractCommand {
 
