@@ -18,27 +18,11 @@ import lombok.val;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class LongPollHandler extends LongPollBot {
     String token;
-
-    @Getter
-    Manager manager;
-
     CommandManager commandManager;
-    EventManager eventManager;
 
-    public LongPollHandler(final String token, final Manager managerOld) {
+    public LongPollHandler(final String token, final CommandManager commandManager) {
         this.token = token;
-
-        manager = new ManagerImpl(
-                managerOld.chatRepository(), managerOld.getPeerIds(), managerOld.getUsers(),
-                vk, managerOld.localData()
-        );
-        Main.setManager(manager);
-
-        val commandManager = SimpleCommandManager.create(manager);
-        val eventManager = SimpleEventManager.create();
-
         this.commandManager = commandManager;
-        this.eventManager = eventManager;
     }
 
     @Override
@@ -50,13 +34,6 @@ public class LongPollHandler extends LongPollBot {
                     + " | " + message.getFromId() + " - " + message);
 
             commandManager.run(message);
-            /* TODO: 09.07.2022 | переделать, бот не может получать ивенты о входах и выходах
-
-            if (!commandManager.run(message)) {
-                if (message.getAction() != null) {
-                    eventManager.run(message, message.getAction());
-                }
-            }*/
         }
     }
 

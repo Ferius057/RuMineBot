@@ -1,6 +1,8 @@
 package kz.ferius_057.ruminebot;
 
 import api.longpoll.bots.exceptions.VkApiException;
+import api.longpoll.bots.methods.VkBotsMethods;
+import kz.ferius_057.ruminebot.command.api.SimpleCommandManager;
 import kz.ferius_057.ruminebot.data.Config;
 import kz.ferius_057.ruminebot.data.LocalData;
 import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
@@ -23,7 +25,6 @@ import static com.google.common.math.LongMath.factorial;
 
 public final class Main {
 
-    @Setter
     @Getter
     private static Manager manager;
 
@@ -49,12 +50,17 @@ public final class Main {
         }
 
         val database = Database.create(config.getFileNameDataBase());
-
         val chatRepository = new ChatRepositoryImpl(database);
-        val longPollHandler = new LongPollHandler(
-                config.getToken(),
-                new ManagerImpl(chatRepository, chatRepository.getChats(), chatRepository.getUsers(), null, localData)
+
+        manager = new ManagerImpl(
+                chatRepository, chatRepository.getChats(), chatRepository.getUsers(),
+                new VkBotsMethods(config.getToken()), localData
         );
+
+        val commandManager = SimpleCommandManager.create(manager);
+
+        val longPollHandler = new LongPollHandler(config.getToken(), commandManager);
+
 
         // для обновления юзеров в чате
         val scheduledFuture = Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(() -> {
