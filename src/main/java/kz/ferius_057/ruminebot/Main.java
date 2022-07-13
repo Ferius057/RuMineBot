@@ -9,10 +9,14 @@ import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 import kz.ferius_057.ruminebot.database.Database;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
 import kz.ferius_057.ruminebot.util.AutoUpdateUser;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import lombok.val;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
@@ -24,6 +28,7 @@ import static com.google.common.math.LongMath.factorial;
 
 
 public final class Main {
+    public static final Logger LOGGER = LogManager.getLogger();
 
     @Getter
     private static Manager manager;
@@ -64,8 +69,10 @@ public final class Main {
 
         // для обновления юзеров в чате
         val scheduledFuture = Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(() -> {
-            System.out.println("update users in 2000000001 chat");
-            AutoUpdateUser.updateChatUsers(2000000001, chatRepository, manager.vk());
+            for (val peerId : manager.getPeerIds()) {
+                System.out.printf("Update users in %d chat\n", peerId);
+                AutoUpdateUser.updateChatUsers(peerId, chatRepository, manager.vk());
+            }
         }, 1, 1, TimeUnit.HOURS);
 
         // при завершении всё выключить
