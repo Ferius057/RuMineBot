@@ -35,9 +35,9 @@ public class AutoUpdateUser {
                 .forEach(item -> {
                     if (users.contains(item.getMemberId()))
                         chatRepository.updateUserChat(item.getMemberId(), peerId,
-                                item.getAdmin() == null ? admins.contains(item.getMemberId()) ? 1 : 0 : 1, true);
+                                item.isAdmin() ? 1 : (admins.contains(item.getMemberId()) ? 1 : 0), true);
                     else
-                        chatRepository.addUserInPeerId(item.getMemberId(), peerId, item.getAdmin() == null ? 0 : 1);
+                        chatRepository.addUserInPeerId(item.getMemberId(), peerId, item.isAdmin() ? 1 : 0);
                 });
 
         users.removeAll(response.getItems()

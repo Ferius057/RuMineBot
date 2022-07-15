@@ -30,8 +30,11 @@ public final class Register extends AbstractCommand {
             response.getItems()
                     .stream()
                     .filter(item -> item.getMemberId() > 0)
-                    .forEach(item -> chatRepository.addUserInPeerId(item.getMemberId(),
-                            peerId, item.getAdmin() == null ? 0 : 1));
+                    .forEach(item -> {
+                        System.out.println(item.getMemberId() + " - " + item.isAdmin() + " = " + (item.isAdmin() ? 1 : 0));
+                        chatRepository.addUserInPeerId(item.getMemberId(),
+                                peerId, item.isAdmin() ? 1 : 0);
+                    });
 
             chatRepository.createChat(peerId);
             manager.getPeerIds().add(peerId);
