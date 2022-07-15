@@ -73,7 +73,7 @@ public final class Main {
                 System.out.printf("Update users in %d chat\n", peerId);
                 AutoUpdateUser.updateChatUsers(peerId, chatRepository, manager.vk());
             }
-        }, 1, 1, TimeUnit.SECONDS);
+        }, 1, 1, TimeUnit.HOURS);
 
         // при завершении всё выключить
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
