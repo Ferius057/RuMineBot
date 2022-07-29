@@ -32,9 +32,15 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {}
+    public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
+        vk.messages.send()
+                .setPeerId(message.getPeerId())
+                .setMessage("❗ Сообщение должно быть ответом на другое сообщение или пересланным сообщение.")
+                .execute();
+    }
 
     @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {}
-
+    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
+        run(cache, message, args);
+    }
 }

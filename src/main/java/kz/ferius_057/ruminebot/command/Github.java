@@ -54,11 +54,6 @@ public class Github extends AbstractCommand {
                 .execute();
     }
 
-    @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        run(cache, message, args);
-    }
-
     private String nickNameParseFromGithubLink(final String text) {
         return text.substring(text.indexOf("github.com/") + 1 + "github.com/".length() - 1);
     }

@@ -24,9 +24,4 @@ public class Help extends AbstractCommand {
                 .setAttachment("article-204964592_46752_e23fdbd46491368d8a")
                 .execute();
     }
-
-    @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        run(cache, message, args);
-    }
 }

@@ -49,5 +49,4 @@ public class ReputationSet extends AbstractCommand {
                 .setMessage(msg)
                 .execute();
     }
-
 }

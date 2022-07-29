@@ -46,10 +46,4 @@ public class ReputationTop extends AbstractCommand {
                 .setMessage(msg)
                 .execute();
     }
-
-    @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        run(cache, message, args);
-    }
-
 }

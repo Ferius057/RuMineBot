@@ -27,8 +27,8 @@ public class BanRep extends AbstractCommand {
         val fullName = cache.getReplySenders().get(0).getFullName();
 
         String msg;
-        if(replySenderUserChat != null && replySenderUserChat.isExist()) {
-            if(!replySenderUserChat.isBanrep()) {
+        if (replySenderUserChat != null && replySenderUserChat.isExist()) {
+            if (!replySenderUserChat.isBanrep()) {
                 chatRepository.updateBanReputation(replyMessages.get(0).getFromId(), peerId, true);
                 msg = "✅ Выдал бан репутации " + fullName.get(2).getPush() + ".";
             } else msg = "❗ У " + fullName.get(1).getPush() + " уже имеется бан репутации.";

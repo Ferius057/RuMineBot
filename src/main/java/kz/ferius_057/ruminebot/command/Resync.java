@@ -35,9 +35,4 @@ public class Resync extends AbstractCommand {
                 .map(api.longpoll.bots.model.objects.basic.User::getId)
                 .map(Object::toString).collect(Collectors.toUnmodifiableList()));
     }
-
-    @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        run(cache, message, args);
-    }
 }

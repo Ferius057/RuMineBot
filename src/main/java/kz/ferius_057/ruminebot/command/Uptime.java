@@ -37,9 +37,4 @@ public class Uptime extends AbstractCommand {
                 .setMessage("✅Бот работает\nВремя запуска: " + localData.getTimeStart() + " GMT+3\n" + time)
                 .execute();
     }
-
-    @Override
-    public void run(CacheDataMessage cache, Message message, List<Message> replyMessages, String[] args) throws VkApiException {
-        run(cache, message, args);
-    }
 }

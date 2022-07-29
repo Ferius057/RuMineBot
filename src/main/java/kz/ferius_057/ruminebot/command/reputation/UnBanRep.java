@@ -37,5 +37,4 @@ public class UnBanRep extends AbstractCommand {
                 .setMessage(msg)
                 .execute();
     }
-
 }
