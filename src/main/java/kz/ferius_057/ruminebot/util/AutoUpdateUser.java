@@ -25,9 +25,9 @@ public class AutoUpdateUser {
                 .setPeerId(peerId).execute().getResponse();
 
         val usersFromChat = chatRepository.getUsersFromChat(peerId);
-        List<Integer> users = usersFromChat
+        val users = usersFromChat
                 .stream().map(UserChat::getUserId).collect(Collectors.toList());
-        List<Integer> admins = usersFromChat
+        val admins = usersFromChat
                 .stream().filter(user -> user.getRole() > 0).map(UserChat::getUserId).collect(Collectors.toList());
 
         response.getItems()

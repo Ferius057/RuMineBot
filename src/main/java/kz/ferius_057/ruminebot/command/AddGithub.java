@@ -29,10 +29,10 @@ public class AddGithub extends AbstractCommand {
         val user = cache.getSender();
         val name = "[id" + message.getFromId() + "|" + cache.getSender().getFirstName()[0] + "],";
 
-        String request = getRequest("https://api.github.com/users/" + github);
+        val request = getRequest("https://api.github.com/users/" + github);
 
-        JsonObject jsonObject = localData.gson.fromJson(request, JsonObject.class);
-        String type = jsonObject.get("type").getAsString();
+        val jsonObject = localData.gson.fromJson(request, JsonObject.class);
+        val type = jsonObject.get("type").getAsString();
 
         String msg;
         if (type.equalsIgnoreCase("user")) {
@@ -66,11 +66,11 @@ public class AddGithub extends AbstractCommand {
 
     public String getRequest(String url) {
         try {
-            URL obj = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            val obj = new URL(url);
+            val connection = (HttpURLConnection) obj.openConnection();
+            val in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            val response = new StringBuilder();
             String inputLine;
-            StringBuilder response = new StringBuilder();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }

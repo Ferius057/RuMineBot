@@ -9,6 +9,7 @@ import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.ExceptRegistered;
 import kz.ferius_057.ruminebot.object.User;
+import lombok.val;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,17 +25,14 @@ public final class Register extends AbstractCommand {
 
         String msg;
         if (!manager.getPeerIds().contains(peerId)) {
-            ExtendedVkList<GetConversationMembers.ResponseBody.Item> response = vk.messages.getConversationMembers()
+            val response = vk.messages.getConversationMembers()
                     .setPeerId(peerId).execute().getResponse();
 
             response.getItems()
                     .stream()
                     .filter(item -> item.getMemberId() > 0)
-                    .forEach(item -> {
-                        System.out.println(item.getMemberId() + " - " + item.isAdmin() + " = " + (item.isAdmin() ? 1 : 0));
-                        chatRepository.addUserInPeerId(item.getMemberId(),
-                                peerId, item.isAdmin() ? 1 : 0);
-                    });
+                    .forEach(item -> chatRepository.addUserInPeerId(item.getMemberId(),
+                            peerId, item.isAdmin() ? 1 : 0));
 
             chatRepository.createChat(peerId);
             manager.getPeerIds().add(peerId);

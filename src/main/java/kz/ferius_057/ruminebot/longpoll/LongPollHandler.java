@@ -10,20 +10,17 @@ import kz.ferius_057.ruminebot.command.api.SimpleCommandManager;
 import kz.ferius_057.ruminebot.event.api.EventManager;
 import kz.ferius_057.ruminebot.event.api.SimpleEventManager;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 
 
+@AllArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class LongPollHandler extends LongPollBot {
     String token;
     CommandManager commandManager;
-
-    public LongPollHandler(final String token, final CommandManager commandManager) {
-        this.token = token;
-        this.commandManager = commandManager;
-    }
 
     @Override
     public void onMessageNew(MessageNew messageNew) {
