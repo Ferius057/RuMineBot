@@ -69,7 +69,7 @@ public class User {
             List<api.longpoll.bots.model.objects.basic.User> responseObject = manager.vk().users.get()
                     .setUserIds(userId)
                     .setNameCase(NameCase.values()[i])
-                    .execute().getResponseObject();
+                    .execute().getResponse();
 
             for (api.longpoll.bots.model.objects.basic.User response : responseObject) {
                 String[] f = fistName.get(response.getId());

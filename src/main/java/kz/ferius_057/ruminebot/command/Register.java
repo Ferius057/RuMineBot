@@ -24,8 +24,8 @@ public final class Register extends AbstractCommand {
 
         String msg;
         if (!manager.getPeerIds().contains(peerId)) {
-            ExtendedVkList<GetConversationMembers.Response.Item> response = vk.messages.getConversationMembers()
-                    .setPeerId(peerId).execute().getResponseObject();
+            ExtendedVkList<GetConversationMembers.ResponseBody.Item> response = vk.messages.getConversationMembers()
+                    .setPeerId(peerId).execute().getResponse();
 
             response.getItems()
                     .stream()

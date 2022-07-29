@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 public class AutoUpdateUser {
 
     @SneakyThrows
-    public ExtendedVkList<GetConversationMembers.Response.Item> updateChatUsers(int peerId, ChatRepository chatRepository, VkBotsMethods vk) {
+    public ExtendedVkList<GetConversationMembers.ResponseBody.Item> updateChatUsers(int peerId, ChatRepository chatRepository, VkBotsMethods vk) {
         val response = vk.messages.getConversationMembers()
-                .setPeerId(peerId).execute().getResponseObject();
+                .setPeerId(peerId).execute().getResponse();
 
         val usersFromChat = chatRepository.getUsersFromChat(peerId);
         List<Integer> users = usersFromChat
@@ -41,7 +41,7 @@ public class AutoUpdateUser {
                 });
 
         users.removeAll(response.getItems()
-                .stream().map(GetConversationMembers.Response.Item::getMemberId).filter(memberId -> memberId > 0).collect(Collectors.toList()));
+                .stream().map(GetConversationMembers.ResponseBody.Item::getMemberId).filter(memberId -> memberId > 0).collect(Collectors.toList()));
         users.forEach(user -> chatRepository.updateExist(user, peerId, false));
 
         return response;
