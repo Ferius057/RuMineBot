@@ -1,6 +1,5 @@
 package kz.ferius_057.ruminebot.object;
 
-import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.additional.NameCase;
 import kz.ferius_057.ruminebot.Manager;
 import lombok.*;
@@ -41,7 +40,7 @@ public class User {
         }
     }
 
-    public static User get(final Manager manager, final int userId) throws VkApiException {
+    public static User get(final Manager manager, final int userId) {
         val user = manager.localData().users.get(userId);
 
         if (user == null) {
@@ -59,7 +58,6 @@ public class User {
 
     @SneakyThrows
     public static void registrationUser(final Manager manager, final List<String> userId) {
-
         // TODO: 27.06.2022 | сделать по нормальному
 
         HashMap<Integer, String[]> fistName = new HashMap<>();

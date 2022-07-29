@@ -1,11 +1,9 @@
 package kz.ferius_057.ruminebot.event;
 
-import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.event.api.AbstractEvent;
 import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
 import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
-import kz.ferius_057.ruminebot.object.User;
 import lombok.val;
 
 /**
@@ -15,7 +13,7 @@ import lombok.val;
 public class ChatInviteByLink extends AbstractEvent {
 
     @Override
-    public void run(Message message, Message.Action action) throws VkApiException {
+    public void run(Message message, Message.Action action) {
         if (action.getMemberId() < 0) return;
 
         val memberId = action.getMemberId();

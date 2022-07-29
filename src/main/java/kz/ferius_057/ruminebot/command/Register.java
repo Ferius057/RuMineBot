@@ -1,9 +1,7 @@
 package kz.ferius_057.ruminebot.command;
 
 import api.longpoll.bots.exceptions.VkApiException;
-import api.longpoll.bots.methods.impl.messages.GetConversationMembers;
 import api.longpoll.bots.model.objects.basic.Message;
-import api.longpoll.bots.model.response.ExtendedVkList;
 import kz.ferius_057.ruminebot.command.api.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;

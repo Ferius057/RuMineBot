@@ -21,11 +21,11 @@ import java.util.List;
  */
 @MinimalArgs(value = 1, message = "!github {ссылка на github аккаунт}")
 @CommandAnnotation(aliases = { "github", "гитхаб" })
-public class AddGithub extends AbstractCommand {
+public class Github extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
-        val github = args[0].length() < 12 ? Math.random() : getFrom(args[0], "github.com/");
+        val github = args[0].length() < 12 ? Math.random() : nickNameParseFromGithubLink(args[0]);
         val user = cache.getSender();
         val name = "[id" + message.getFromId() + "|" + cache.getSender().getFirstName()[0] + "],";
 
@@ -59,8 +59,8 @@ public class AddGithub extends AbstractCommand {
         run(cache, message, args);
     }
 
-    private String getFrom(final String text, final String from) {
-        return text.substring(text.indexOf(from) + 1 + from.length() - 1);
+    private String nickNameParseFromGithubLink(final String text) {
+        return text.substring(text.indexOf("github.com/") + 1 + "github.com/".length() - 1);
     }
 
 

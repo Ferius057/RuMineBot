@@ -7,7 +7,7 @@ import api.longpoll.bots.model.objects.basic.Message;
  */
 public interface CommandManager {
 
-    boolean run(Message message);
+    void run(Message message);
 
     void register(Command command);
 

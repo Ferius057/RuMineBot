@@ -9,14 +9,9 @@ import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
 import kz.ferius_057.ruminebot.database.Database;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
 import kz.ferius_057.ruminebot.util.AutoUpdateUser;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import lombok.val;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.io.IOException;
@@ -24,12 +19,8 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.concurrent.*;
 
-import static com.google.common.math.LongMath.factorial;
-
 
 public final class Main {
-    public static final Logger LOGGER = LogManager.getLogger();
-
     @Getter
     private static Manager manager;
 

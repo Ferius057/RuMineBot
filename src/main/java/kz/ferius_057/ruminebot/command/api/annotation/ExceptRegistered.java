@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExceptRegistered { // TODO: 12.07.2022 | сменить название на адекватное
+public @interface ExceptRegistered {
 
 }

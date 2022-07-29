@@ -1,6 +1,5 @@
 package kz.ferius_057.ruminebot.event.api;
 
-import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 
 /**
@@ -8,5 +7,5 @@ import api.longpoll.bots.model.objects.basic.Message;
  */
 public interface Event {
 
-    void run(Message message, Message.Action action) throws VkApiException;
+    void run(Message message, Message.Action action);
 }

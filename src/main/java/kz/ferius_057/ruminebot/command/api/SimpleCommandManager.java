@@ -43,14 +43,14 @@ public final class SimpleCommandManager implements CommandManager {
     }
 
     @Override
-    public boolean run(final Message message) {
+    public void run(final Message message) {
         val text = message.getText();
 
         Command command;
         String[] params, args;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {
-            if (commandMap.get(text.split(" ")[0].toLowerCase()) == null || text.charAt(0) != '+') return false;
+            if (commandMap.get(text.split(" ")[0].toLowerCase()) == null || text.charAt(0) != '+') return;
 
             params = text.substring(1).split(" ");
             command = commandMap.get(text.split(" ")[0].toLowerCase());
@@ -60,58 +60,51 @@ public final class SimpleCommandManager implements CommandManager {
         }
         args = Arrays.copyOfRange(params, 1, params.length);
 
-        if (command == null) return true;
+        if (command != null) {
+            try {
+                val messages = replyMessage(message);
 
-        try {
-            val messages = replyMessage(message);
+                cacheDataMessage.getReplySenders().clear();
+                cacheDataMessage.getReplySendersUserChat().clear();
 
-            cacheDataMessage.getReplySenders().clear();
-            cacheDataMessage.getReplySendersUserChat().clear();
+                cacheDataMessage.setSender(User.get(manager, message.getFromId()));
+                cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
 
-            cacheDataMessage.setSender(User.get(manager, message.getFromId()));
-            cacheDataMessage.setSenderUserChat(manager.chatRepository().getUserFromChat(message.getFromId(), message.getPeerId()));
+                if (!checkRegisterChatForCommand(command, message.getPeerId())) return;
+                if (!checkSyntax(command, message.getPeerId(), args)) return;
+                if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId())) return;
 
-            if (!checkRegisterChatForCommand(command, message.getPeerId()))
-                return true;
-            if (!checkSyntax(command, message.getPeerId(), args)) {
-                return true;
-            }
-            if (!checkPermission(command, cacheDataMessage.getSender(), cacheDataMessage.getSenderUserChat(), message.getPeerId())) {
-                return true;
-            }
+                if (messages.size() == 0)
+                    command.run(cacheDataMessage, message, args);
+                else {
+                    val users = cacheDataMessage.getReplySenders();
+                    val userChats = cacheDataMessage.getReplySendersUserChat();
 
-            if (messages.size() == 0)
-                command.run(cacheDataMessage, message, args);
-            else {
-                val users = cacheDataMessage.getReplySenders();
-                val userChats = cacheDataMessage.getReplySendersUserChat();
-
-                for (val reply : messages) {
-                    if (reply.getFromId() > 0) {
-                        users.add(User.get(manager, reply.getFromId()));
-                        userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
+                    for (val reply : messages) {
+                        if (reply.getFromId() > 0) {
+                            users.add(User.get(manager, reply.getFromId()));
+                            userChats.add(manager.chatRepository().getUserFromChat(reply.getFromId(), message.getPeerId()));
+                        }
                     }
+
+                    if (users.size() <= 0) {
+                        manager.vk().messages.send()
+                                .setPeerId(message.getPeerId())
+                                .setDisableMentions(true)
+                                .setMessage("❌ Данная команда работает только на пользователей.")
+                                .execute();
+                        return;
+                    }
+
+                    cacheDataMessage.setReplySenders(users);
+                    cacheDataMessage.setReplySendersUserChat(userChats);
+
+                    command.run(cacheDataMessage, message, messages, args);
                 }
-
-                if (users.size() <= 0) {
-                    manager.vk().messages.send()
-                            .setPeerId(message.getPeerId())
-                            .setDisableMentions(true)
-                            .setMessage("❌ Данная команда работает только на пользователей.")
-                            .execute();
-                    return true;
-                }
-
-                cacheDataMessage.setReplySenders(users);
-                cacheDataMessage.setReplySendersUserChat(userChats);
-
-                command.run(cacheDataMessage, message, messages, args);
+            } catch (VkApiException e) {
+                e.printStackTrace();
             }
-        } catch (VkApiException e) {
-            e.printStackTrace();
         }
-
-        return true;
     }
 
     @Override

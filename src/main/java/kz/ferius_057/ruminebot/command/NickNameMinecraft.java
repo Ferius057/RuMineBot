@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 @MinimalArgs(value = 1, message = "!nick {твой ник}")
 @CommandAnnotation(aliases = { "minenick", "minenickname", "minecraftnickname", "майнник", "ник", "никнейм", "nick", "nickname" })
-public class AddNickNameMinecraft extends AbstractCommand {
+public class NickNameMinecraft extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
@@ -25,7 +25,7 @@ public class AddNickNameMinecraft extends AbstractCommand {
         val name = "[id" + message.getFromId() + "|" + cache.getSender().getFirstName()[0] + "],";
 
         String msg;
-        if (Pattern.compile("^[a-zA-Z0-9_]{0,100}$").matcher(nickName).find()) {
+        if (Pattern.compile("^\\w{0,100}$").matcher(nickName).find()) { // \w - [A-Za-z0-9_]
             if (nickName.length() >= 2 && nickName.length() <= 32) {
 
                 chatRepository.updateUser(user.getUserId(),

@@ -1,6 +1,5 @@
 package kz.ferius_057.ruminebot.event.api;
 
-import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
 import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
 import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
@@ -35,11 +34,7 @@ public final class SimpleEventManager implements EventManager {
         val event = eventMap.get(action.getType());
         if (event == null) return false;
 
-        try {
-            event.run(message, action);
-        } catch (VkApiException e) {
-            e.printStackTrace();
-        }
+        event.run(message, action);
         return true;
     }
 
