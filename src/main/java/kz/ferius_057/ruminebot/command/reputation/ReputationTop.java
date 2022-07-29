@@ -9,41 +9,49 @@ import kz.ferius_057.ruminebot.object.User;
 import lombok.val;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Charles_Grozny
  */
-@CommandAnnotation(aliases = { "reptop", "рептоп" })
+@CommandAnnotation(aliases = {"reptop", "рептоп"})
 public class ReputationTop extends AbstractCommand {
 
     @Override
     public void run(CacheDataMessage cache, Message message, String[] args) throws VkApiException {
-        val top = chatRepository.getUsersFromChat(message.getPeerId())
-                .stream()
-                .filter(s -> s.getReputation() >= 1)
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-
-        String msg;
-        if (top.size() != 0) {
-            val text = new StringBuilder("⭐ Топ репутации пользователей в беседе:\n");
-            for (int i = 0; i < top.size(); i++) {
-                text.append(i + 1).append(". ")
-                        .append(User.get(manager, top.get(i).getUserId()).getFullName().get(0).getPush())
+        val text = new StringBuilder("⭐ Топ репутации пользователей в беседе:\n");
+        val count = new AtomicInteger(0);
+        chatRepository.getUsersFromChat(message.getPeerId()).stream()
+                .filter(s -> s.getReputation() > 0).sorted(Comparator.reverseOrder())
+                .forEach(userChat -> text.append(count.addAndGet(1)).append(". ")
+                        .append(User.get(manager, userChat.getUserId()).getFullName().get(0).getPush())
                         .append(" - ")
-                        .append(top.get(i).getReputation())
-                        .append(" реп.\n");
-            }
+                        .append(userChat.getReputation())
+                        .append(" реп.\n"));
 
-            msg = text.toString();
-        } else msg = "⭐ В беседе у всех 0 репутации.";
+        if (count.get() <= 0)
+            text.delete(0, text.length()).append("⭐ В беседе у всех 0 репутации.");
+
+        if (hasBadTop(args)) {
+            text.append("\n\n\uD83D\uDD3B Пользователи имеющие репутацию меньше 0:\n");
+            count.set(0);
+            chatRepository.getUsersFromChat(message.getPeerId()).stream()
+                    .filter(s -> s.getReputation() < 0).sorted(Comparator.reverseOrder())
+                    .forEach(userChat -> text.append(count.addAndGet(1)).append(". ")
+                            .append(User.get(manager, userChat.getUserId()).getFullName().get(0).getPush())
+                            .append(" - <<")
+                            .append(userChat.getReputation())
+                            .append(">> реп.\n"));
+        }
 
         vk.messages.send()
                 .setPeerId(message.getPeerId())
                 .setDisableMentions(true)
-                .setMessage(msg)
+                .setMessage(text.toString())
                 .execute();
+    }
+
+    private boolean hasBadTop(String... args) {
+        return args.length > 0 && args[0].equalsIgnoreCase("-");
     }
 }

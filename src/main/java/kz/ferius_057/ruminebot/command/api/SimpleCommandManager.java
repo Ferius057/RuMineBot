@@ -47,13 +47,16 @@ public final class SimpleCommandManager implements CommandManager {
         val text = message.getText();
 
         Command command;
-        String[] params, args;
+        String[] split, params, args;
+
+        split = text.split(" ");
+        if (split.length == 0) return;
 
         if (text.length() <= 1 || text.charAt(0) != '!') {
-            if (commandMap.get(text.split(" ")[0].toLowerCase()) == null || text.charAt(0) != '+') return;
+            if (commandMap.get(split[0].toLowerCase()) == null || text.charAt(0) != '+') return;
 
             params = text.substring(1).split(" ");
-            command = commandMap.get(text.split(" ")[0].toLowerCase());
+            command = commandMap.get(split[0].toLowerCase());
         } else {
             params = text.substring(1).split(" ");
             command = commandMap.get(params[0].toLowerCase());
