@@ -2,12 +2,14 @@ package kz.ferius_057.ruminebot;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.methods.VkBotsMethods;
-import kz.ferius_057.ruminebot.command.api.SimpleCommandManager;
+import kz.ferius_057.ruminebot.command.api.impl.SimpleCommandManager;
 import kz.ferius_057.ruminebot.data.Config;
 import kz.ferius_057.ruminebot.data.LocalData;
-import kz.ferius_057.ruminebot.database.ChatRepositoryImpl;
+import kz.ferius_057.ruminebot.database.impl.SimpleChatRepository;
 import kz.ferius_057.ruminebot.database.Database;
 import kz.ferius_057.ruminebot.longpoll.LongPollHandler;
+import kz.ferius_057.ruminebot.manager.Manager;
+import kz.ferius_057.ruminebot.manager.impl.ManagerImpl;
 import kz.ferius_057.ruminebot.util.AutoUpdateUser;
 import lombok.Getter;
 import lombok.val;
@@ -46,7 +48,7 @@ public final class Main {
         }
 
         val database = Database.create(config.getFileNameDataBase());
-        val chatRepository = new ChatRepositoryImpl(database);
+        val chatRepository = new SimpleChatRepository(database);
 
         manager = new ManagerImpl(
                 chatRepository, chatRepository.getChats(), chatRepository.getUsers(),

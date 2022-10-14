@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.object;
+package kz.ferius_057.ruminebot.object.basic;
 
 import lombok.AccessLevel;
 import lombok.Getter;

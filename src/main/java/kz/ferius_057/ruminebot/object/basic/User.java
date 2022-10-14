@@ -1,7 +1,7 @@
-package kz.ferius_057.ruminebot.object;
+package kz.ferius_057.ruminebot.object.basic;
 
 import api.longpoll.bots.model.objects.additional.NameCase;
-import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.manager.Manager;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

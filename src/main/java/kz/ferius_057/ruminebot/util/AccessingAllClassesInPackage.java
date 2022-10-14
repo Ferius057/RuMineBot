@@ -1,9 +1,9 @@
 package kz.ferius_057.ruminebot.util;
 
 import com.google.common.reflect.ClassPath;
-import kz.ferius_057.ruminebot.command.api.AbstractCommand;
+import kz.ferius_057.ruminebot.command.api.impl.AbstractCommand;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
-import kz.ferius_057.ruminebot.event.api.AbstractEvent;
+import kz.ferius_057.ruminebot.event.api.impl.AbstractEvent;
 import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
 import lombok.experimental.UtilityClass;
 

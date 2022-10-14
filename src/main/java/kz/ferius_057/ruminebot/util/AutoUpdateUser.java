@@ -4,7 +4,7 @@ import api.longpoll.bots.methods.VkBotsMethods;
 import api.longpoll.bots.methods.impl.messages.GetConversationMembers;
 import api.longpoll.bots.model.response.ExtendedVkList;
 import kz.ferius_057.ruminebot.database.ChatRepository;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;

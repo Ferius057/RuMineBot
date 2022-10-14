@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot;
+package kz.ferius_057.ruminebot.manager;
 
 import api.longpoll.bots.methods.VkBotsMethods;
 import kz.ferius_057.ruminebot.data.LocalData;

@@ -2,12 +2,10 @@ package kz.ferius_057.ruminebot.command;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.impl.AbstractCommand;
+import kz.ferius_057.ruminebot.command.api.model.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.ExceptRegistered;
-
-import java.util.List;
 
 /**
  * @author Charles_Grozny

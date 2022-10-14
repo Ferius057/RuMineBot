@@ -1,7 +1,7 @@
 package kz.ferius_057.ruminebot.data;
 
 import com.google.gson.Gson;
-import kz.ferius_057.ruminebot.object.User;
+import kz.ferius_057.ruminebot.object.basic.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

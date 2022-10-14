@@ -1,7 +1,9 @@
-package kz.ferius_057.ruminebot.database;
+package kz.ferius_057.ruminebot.database.impl;
 
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.database.ChatRepository;
+import kz.ferius_057.ruminebot.database.Database;
+import kz.ferius_057.ruminebot.object.basic.User;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -12,11 +14,11 @@ import java.util.Set;
 /**
  * @author Charles_Grozny
  */
-public class ChatRepositoryImpl implements ChatRepository {
+public class SimpleChatRepository implements ChatRepository {
 
     private final Database database;
 
-    public ChatRepositoryImpl(Database database) {
+    public SimpleChatRepository(Database database) {
         this.database = database;
 
         createTables();

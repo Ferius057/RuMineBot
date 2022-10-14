@@ -1,4 +1,4 @@
-package kz.ferius_057.ruminebot.event.api;
+package kz.ferius_057.ruminebot.event.api.model.media;
 
 
 import lombok.AccessLevel;

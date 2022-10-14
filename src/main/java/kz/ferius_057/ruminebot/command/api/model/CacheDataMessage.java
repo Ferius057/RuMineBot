@@ -1,7 +1,7 @@
-package kz.ferius_057.ruminebot.command.api;
+package kz.ferius_057.ruminebot.command.api.model;
 
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.object.basic.User;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

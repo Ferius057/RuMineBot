@@ -1,6 +1,6 @@
 package kz.ferius_057.ruminebot.event.api.annotation;
 
-import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
+import kz.ferius_057.ruminebot.event.api.model.media.MessageActionStatus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

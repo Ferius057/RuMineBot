@@ -1,6 +1,8 @@
-package kz.ferius_057.ruminebot.event.api;
+package kz.ferius_057.ruminebot.event.api.impl;
 
 import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.event.api.Event;
+import kz.ferius_057.ruminebot.event.api.EventManager;
 import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
 import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
 import lombok.AccessLevel;

@@ -1,7 +1,7 @@
 package kz.ferius_057.ruminebot.database;
 
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.object.basic.User;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 
 import java.util.List;
 import java.util.Set;

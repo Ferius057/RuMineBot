@@ -2,6 +2,7 @@ package kz.ferius_057.ruminebot.command.api;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
+import kz.ferius_057.ruminebot.command.api.model.CacheDataMessage;
 
 import java.util.List;
 

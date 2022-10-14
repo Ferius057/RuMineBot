@@ -1,9 +1,10 @@
-package kz.ferius_057.ruminebot.event.api;
+package kz.ferius_057.ruminebot.event.api.impl;
 
 import api.longpoll.bots.methods.VkBotsMethods;
 import kz.ferius_057.ruminebot.Main;
-import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.manager.Manager;
 import kz.ferius_057.ruminebot.database.ChatRepository;
+import kz.ferius_057.ruminebot.event.api.Event;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;

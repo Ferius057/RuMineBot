@@ -1,14 +1,17 @@
-package kz.ferius_057.ruminebot.command.api;
+package kz.ferius_057.ruminebot.command.api.impl;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.Manager;
+import kz.ferius_057.ruminebot.manager.Manager;
+import kz.ferius_057.ruminebot.command.api.Command;
+import kz.ferius_057.ruminebot.command.api.CommandManager;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.MinimalArgs;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
 import kz.ferius_057.ruminebot.command.api.annotation.ExceptRegistered;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.command.api.model.CacheDataMessage;
+import kz.ferius_057.ruminebot.object.basic.User;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 import kz.ferius_057.ruminebot.util.AccessingAllClassesInPackage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,6 +51,8 @@ public final class SimpleCommandManager implements CommandManager {
 
         Command command;
         String[] split, params, args;
+
+        // TODO: 29.07.2022 | переписать и сделать что бы через пробел команда тоже работала
 
         split = text.split(" ");
         if (split.length == 0) return;
@@ -90,7 +95,7 @@ public final class SimpleCommandManager implements CommandManager {
                         }
                     }
 
-                    if (users.size() <= 0) {
+                    if (users.size() == 0) {
                         manager.vk().messages.send()
                                 .setPeerId(message.getPeerId())
                                 .setDisableMentions(true)

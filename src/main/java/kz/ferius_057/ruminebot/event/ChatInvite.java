@@ -1,8 +1,8 @@
 package kz.ferius_057.ruminebot.event;
 
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.event.api.AbstractEvent;
-import kz.ferius_057.ruminebot.event.api.MessageActionStatus;
+import kz.ferius_057.ruminebot.event.api.impl.AbstractEvent;
+import kz.ferius_057.ruminebot.event.api.model.media.MessageActionStatus;
 import kz.ferius_057.ruminebot.event.api.annotation.EventAnnotation;
 import lombok.val;
 

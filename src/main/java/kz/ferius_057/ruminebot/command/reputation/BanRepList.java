@@ -2,15 +2,14 @@ package kz.ferius_057.ruminebot.command.reputation;
 
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.objects.basic.Message;
-import kz.ferius_057.ruminebot.command.api.AbstractCommand;
-import kz.ferius_057.ruminebot.command.api.CacheDataMessage;
+import kz.ferius_057.ruminebot.command.api.impl.AbstractCommand;
+import kz.ferius_057.ruminebot.command.api.model.CacheDataMessage;
 import kz.ferius_057.ruminebot.command.api.annotation.CommandAnnotation;
 import kz.ferius_057.ruminebot.command.api.annotation.Permission;
-import kz.ferius_057.ruminebot.object.User;
-import kz.ferius_057.ruminebot.object.UserChat;
+import kz.ferius_057.ruminebot.object.basic.User;
+import kz.ferius_057.ruminebot.object.basic.UserChat;
 import lombok.val;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
